@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { QUESTION_BANK } from '@/data/questionBank'
 
 describe('question bank', () => {
-  it('contains at least 1000 unique questions', () => {
-    expect(QUESTION_BANK.length).toBeGreaterThanOrEqual(1000)
+  it('contains at least 2000 unique questions', () => {
+    expect(QUESTION_BANK.length).toBeGreaterThanOrEqual(2000)
     const ids = new Set(QUESTION_BANK.map((q) => q.id))
     expect(ids.size).toBe(QUESTION_BANK.length)
   })

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { BarChart3, BookOpen, Clock3, RefreshCcw, Target } from 'lucide-react'
+import { BarChart3, BookOpen, Clock3, LineChart, RefreshCcw, Target } from 'lucide-react'
+import { EXAM_BLUEPRINTS } from '@/data/examBlueprint'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,6 +22,40 @@ import type { CFALevel } from '@/types/quiz'
 
 const LEVELS: CFALevel[] = ['L1', 'L2', 'L3']
 
+type ReviewFilter = 'all' | 'correct' | 'incorrect'
+
+function ScoreTrendChart({ points }: { points: Array<{ label: string; percent: number }> }) {
+  if (points.length === 0) {
+    return <p className="text-sm text-muted-foreground">Complete sessions to view trend.</p>
+  }
+
+  const width = 420
+  const height = 140
+  const padX = 28
+  const padY = 18
+  const stepX = points.length > 1 ? (width - 2 * padX) / (points.length - 1) : 0
+  const polyline = points
+    .map((point, index) => {
+      const x = padX + index * stepX
+      const y = height - padY - (point.percent / 100) * (height - 2 * padY)
+      return `${x},${y}`
+    })
+    .join(' ')
+
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} className="h-44 w-full rounded-md border bg-card/60 p-2">
+      <line x1={padX} y1={height - padY} x2={width - padX} y2={height - padY} stroke="currentColor" opacity="0.18" />
+      <line x1={padX} y1={padY} x2={padX} y2={height - padY} stroke="currentColor" opacity="0.18" />
+      <polyline fill="none" stroke="currentColor" strokeWidth="2.5" points={polyline} />
+      {points.map((point, index) => {
+        const cx = padX + index * stepX
+        const cy = height - padY - (point.percent / 100) * (height - 2 * padY)
+        return <circle key={point.label} cx={cx} cy={cy} r="3" fill="currentColor" />
+      })}
+    </svg>
+  )
+}
+
 function App() {
   const {
     questions,
@@ -34,10 +69,14 @@ function App() {
     getActiveScore,
     getTopicAccuracy,
     getAnsweredDifficulties,
+    getAnsweredHistory,
+    getSessionTrend,
   } = useStudyStore()
 
   const [selectedLevels, setSelectedLevels] = useState<CFALevel[]>(['L1', 'L2', 'L3'])
-  const [sessionSize, setSessionSize] = useState(30)
+  const [sessionSize, setSessionSize] = useState(40)
+  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('all')
+  const [selectedReviewKey, setSelectedReviewKey] = useState<string | null>(null)
 
   const currentQuestionId = activeSession ? getCurrentQuestionId(activeSession) : undefined
   const currentQuestion = currentQuestionId ? questionsById[currentQuestionId] : undefined
@@ -50,10 +89,28 @@ function App() {
 
   const topicAccuracy = getTopicAccuracy()
   const answeredDifficulties = getAnsweredDifficulties()
+  const answeredHistory = getAnsweredHistory()
+  const sessionTrend = getSessionTrend()
 
   const totalAnswered = useMemo(
     () => answeredDifficulties.reduce((sum, row) => sum + row.answered, 0),
     [answeredDifficulties],
+  )
+
+  const reviewRows = useMemo(() => {
+    return answeredHistory.filter((row) => {
+      if (reviewFilter === 'all') {
+        return true
+      }
+      if (reviewFilter === 'correct') {
+        return row.isCorrect
+      }
+      return !row.isCorrect
+    })
+  }, [answeredHistory, reviewFilter])
+
+  const selectedReview = reviewRows.find(
+    (row) => `${row.questionId}-${row.answeredAt}` === selectedReviewKey,
   )
 
   const toggleLevel = (level: CFALevel): void => {
@@ -67,11 +124,17 @@ function App() {
 
   const startSession = (): void => {
     createNewSession({
-      size: Math.max(10, Math.min(120, sessionSize)),
+      size: Math.max(10, Math.min(180, sessionSize)),
       filters: {
         levels: selectedLevels.length > 0 ? selectedLevels : ['L1', 'L2', 'L3'],
       },
     })
+  }
+
+  const applyExamPreset = (level: CFALevel): void => {
+    const blueprint = EXAM_BLUEPRINTS[level]
+    setSelectedLevels([level])
+    setSessionSize(blueprint.totalQuestions)
   }
 
   return (
@@ -81,69 +144,130 @@ function App() {
           <Badge variant="secondary" className="rounded-full px-3 py-1">
             CFA Level I, II, III
           </Badge>
-          <Badge className="rounded-full px-3 py-1">1000 MCQs</Badge>
+          <Badge className="rounded-full px-3 py-1">{questions.length} MCQs</Badge>
         </div>
         <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">CFA Study Bank</h1>
         <p className="mt-2 max-w-3xl text-sm text-muted-foreground md:text-base">
-          Practice exam-style, single-best-answer questions across the CFA curriculum. Your
-          progress is saved locally in your browser for quick resume sessions.
+          Practice exam-style, calculation-heavy questions with topic weighting guidance and answer
+          review. Progress is saved locally so you can resume and iterate fast.
         </p>
       </header>
 
       <Tabs defaultValue="practice" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:w-[420px]">
+        <TabsList className="grid w-full grid-cols-3 md:w-[560px]">
           <TabsTrigger value="practice">Practice</TabsTrigger>
+          <TabsTrigger value="review">Review</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
 
         <TabsContent value="practice" className="space-y-4">
           {!activeSession ? (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <BookOpen className="h-5 w-5" /> Session Setup
-                </CardTitle>
-                <CardDescription>Choose level coverage and question count.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                <div className="grid gap-3 md:grid-cols-3">
-                  {LEVELS.map((level) => (
-                    <Label
-                      key={level}
-                      className="flex cursor-pointer items-center gap-2 rounded-md border p-3"
-                    >
-                      <Checkbox
-                        checked={selectedLevels.includes(level)}
-                        onCheckedChange={() => toggleLevel(level)}
-                        aria-label={`Toggle ${level}`}
-                      />
-                      <span>{level}</span>
-                    </Label>
-                  ))}
-                </div>
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <BookOpen className="h-5 w-5" /> Session Setup
+                  </CardTitle>
+                  <CardDescription>
+                    Choose level coverage and count. Use exam preset buttons for official question
+                    counts and timing.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-5">
+                  <div className="grid gap-3 md:grid-cols-3">
+                    {LEVELS.map((level) => (
+                      <Label
+                        key={level}
+                        className="flex cursor-pointer items-center gap-2 rounded-md border p-3"
+                      >
+                        <Checkbox
+                          checked={selectedLevels.includes(level)}
+                          onCheckedChange={() => toggleLevel(level)}
+                          aria-label={`Toggle ${level}`}
+                        />
+                        <span>{level}</span>
+                      </Label>
+                    ))}
+                  </div>
 
-                <div className="w-full max-w-xs space-y-2">
-                  <Label htmlFor="question-count">Question count</Label>
-                  <Input
-                    id="question-count"
-                    type="number"
-                    min={10}
-                    max={120}
-                    value={sessionSize}
-                    onChange={(event) => setSessionSize(Number(event.target.value) || 30)}
-                  />
-                </div>
+                  <div className="flex flex-wrap gap-2">
+                    {LEVELS.map((level) => (
+                      <Button
+                        key={level}
+                        variant="outline"
+                        onClick={() => applyExamPreset(level)}
+                        type="button"
+                      >
+                        {level} Exam Preset
+                      </Button>
+                    ))}
+                  </div>
 
-                <div className="flex flex-wrap gap-2">
-                  <Button onClick={startSession} data-testid="start-session">
-                    Start New Session
-                  </Button>
-                  <Button variant="outline" onClick={resetProgress}>
-                    <RefreshCcw className="mr-2 h-4 w-4" /> Reset Local Progress
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                  <div className="w-full max-w-xs space-y-2">
+                    <Label htmlFor="question-count">Question count</Label>
+                    <Input
+                      id="question-count"
+                      type="number"
+                      min={10}
+                      max={180}
+                      value={sessionSize}
+                      onChange={(event) => setSessionSize(Number(event.target.value) || 40)}
+                    />
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <Button onClick={startSession} data-testid="start-session">
+                      Start New Session
+                    </Button>
+                    <Button variant="outline" onClick={resetProgress}>
+                      <RefreshCcw className="mr-2 h-4 w-4" /> Reset Local Progress
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">2026 Exam Blueprint Snapshot</CardTitle>
+                  <CardDescription>
+                    Official structure and topic-weight bands used to tune this study bank.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid gap-4 md:grid-cols-3">
+                    {LEVELS.map((level) => {
+                      const blueprint = EXAM_BLUEPRINTS[level]
+                      return (
+                        <div key={level} className="rounded-md border p-3 text-sm">
+                          <p className="font-medium">{blueprint.officialLabel}</p>
+                          <p className="text-muted-foreground">
+                            {blueprint.totalQuestions} questions, {blueprint.totalMinutes} minutes
+                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground">{blueprint.structure}</p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">Topic weight bands</p>
+                    {(selectedLevels.length === 1
+                      ? EXAM_BLUEPRINTS[selectedLevels[0]].topicWeights
+                      : EXAM_BLUEPRINTS.L1.topicWeights
+                    ).map((weight) => (
+                      <div key={weight.topic} className="space-y-1">
+                        <div className="flex items-center justify-between text-xs">
+                          <span>{weight.topic}</span>
+                          <span className="text-muted-foreground">
+                            {weight.low}-{weight.high}%
+                          </span>
+                        </div>
+                        <Progress value={(weight.low + weight.high) / 2} />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </>
           ) : null}
 
           {activeSession && currentQuestion ? (
@@ -176,7 +300,7 @@ function App() {
                     return (
                       <button
                         type="button"
-                        key={choice}
+                        key={`${currentQuestion.id}-${choice}`}
                         className={`w-full rounded-md border p-3 text-left text-sm ${tone}`}
                         disabled={submitted}
                         onClick={() => submitCurrentAnswer(index)}
@@ -211,6 +335,103 @@ function App() {
               </CardHeader>
             </Card>
           )}
+        </TabsContent>
+
+        <TabsContent value="review" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Answered Questions</CardTitle>
+              <CardDescription>
+                Review all attempted questions, including your selected answer and explanation.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={reviewFilter === 'all' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setReviewFilter('all')}
+                >
+                  All
+                </Button>
+                <Button
+                  variant={reviewFilter === 'incorrect' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setReviewFilter('incorrect')}
+                >
+                  Incorrect
+                </Button>
+                <Button
+                  variant={reviewFilter === 'correct' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setReviewFilter('correct')}
+                >
+                  Correct
+                </Button>
+              </div>
+
+              {reviewRows.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No answered questions yet.</p>
+              ) : (
+                <div className="grid gap-4 md:grid-cols-[1.2fr_1fr]">
+                  <div className="max-h-[440px] space-y-2 overflow-auto pr-1">
+                    {reviewRows.map((row) => {
+                      const key = `${row.questionId}-${row.answeredAt}`
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          className={`w-full rounded-md border p-3 text-left text-sm ${selectedReviewKey === key ? 'border-primary bg-primary/5' : ''}`}
+                          onClick={() => setSelectedReviewKey(key)}
+                        >
+                          <div className="mb-1 flex items-center justify-between gap-2">
+                            <Badge variant="outline">{row.question.level}</Badge>
+                            <span className={row.isCorrect ? 'text-emerald-600' : 'text-rose-600'}>
+                              {row.isCorrect ? 'Correct' : 'Incorrect'}
+                            </span>
+                          </div>
+                          <p className="line-clamp-2">{row.question.stem}</p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {row.question.topic} • Q{row.questionIndex + 1}/{row.totalQuestions}
+                          </p>
+                        </button>
+                      )
+                    })}
+                  </div>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm">Review Detail</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2 text-sm">
+                      {selectedReview ? (
+                        <>
+                          <p className="font-medium">{selectedReview.question.stem}</p>
+                          <p>
+                            Your answer:{' '}
+                            <span className={selectedReview.isCorrect ? 'text-emerald-600' : 'text-rose-600'}>
+                              {String.fromCharCode(65 + selectedReview.selectedIndex)}.{' '}
+                              {selectedReview.question.choices[selectedReview.selectedIndex]}
+                            </span>
+                          </p>
+                          <p>
+                            Correct answer: {String.fromCharCode(65 + selectedReview.question.correctIndex)}.{' '}
+                            {selectedReview.question.choices[selectedReview.question.correctIndex]}
+                          </p>
+                          <Separator />
+                          <p className="text-muted-foreground">{selectedReview.question.explanation}</p>
+                        </>
+                      ) : (
+                        <p className="text-muted-foreground">
+                          Select an answered question from the list to inspect details.
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-4">
@@ -249,6 +470,23 @@ function App() {
               </CardContent>
             </Card>
           </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <LineChart className="h-4 w-4" /> Score Trend (Recent Sessions)
+              </CardTitle>
+              <CardDescription>Graph of your completed session percentages.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ScoreTrendChart points={sessionTrend.map((s) => ({ label: s.label, percent: s.percent }))} />
+              {sessionTrend.length > 0 ? (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Latest: {sessionTrend[sessionTrend.length - 1].percent}%
+                </p>
+              ) : null}
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>

@@ -9,7 +9,14 @@ import {
   submitAnswer,
 } from '@/lib/quiz-engine'
 import { loadState, saveState } from '@/lib/storage'
-import type { Difficulty, Question, QuizFilters, QuizSession, SessionScore } from '@/types/quiz'
+import type {
+  AnsweredQuestionRecord,
+  Difficulty,
+  Question,
+  QuizFilters,
+  QuizSession,
+  SessionScore,
+} from '@/types/quiz'
 
 type CreateSessionInput = {
   size: number
@@ -28,6 +35,8 @@ type StudyStore = {
   getActiveScore: () => SessionScore
   getTopicAccuracy: () => Array<{ topic: string; answered: number; correct: number; percent: number }>
   getAnsweredDifficulties: () => Array<{ difficulty: Difficulty; answered: number }>
+  getAnsweredHistory: () => Array<AnsweredQuestionRecord & { question: Question }>
+  getSessionTrend: () => Array<{ label: string; percent: number; answered: number; total: number }>
 }
 
 const persisted = loadState()
@@ -198,5 +207,50 @@ export const useStudyStore = create<StudyStore>((set, get) => ({
       difficulty: difficulty as Difficulty,
       answered: counts.get(difficulty as Difficulty) ?? 0,
     }))
+  },
+  getAnsweredHistory: () => {
+    const state = get()
+    const sessions = state.activeSession
+      ? [state.activeSession, ...state.completedSessions]
+      : state.completedSessions
+    const records: Array<AnsweredQuestionRecord & { question: Question }> = []
+
+    for (const session of sessions) {
+      for (const [questionId, answer] of Object.entries(session.answers)) {
+        const question = state.questionsById[questionId]
+        if (!question) {
+          continue
+        }
+
+        const questionIndex = session.questionIds.indexOf(questionId)
+        records.push({
+          questionId,
+          sessionId: session.id,
+          questionIndex,
+          totalQuestions: session.questionIds.length,
+          answeredAt: answer.answeredAt,
+          selectedIndex: answer.selectedIndex,
+          isCorrect: answer.isCorrect,
+          question,
+        })
+      }
+    }
+
+    return records.sort((a, b) => Date.parse(b.answeredAt) - Date.parse(a.answeredAt))
+  },
+  getSessionTrend: () => {
+    const state = get()
+    return [...state.completedSessions]
+      .map((session, idx) => {
+        const score = scoreSession(session)
+        return {
+          label: `S${state.completedSessions.length - idx}`,
+          percent: score.percent,
+          answered: score.answered,
+          total: score.total,
+        }
+      })
+      .reverse()
+      .slice(-12)
   },
 }))

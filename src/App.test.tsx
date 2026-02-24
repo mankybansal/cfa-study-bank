@@ -26,5 +26,8 @@ describe('App', () => {
 
     await user.click(options[0])
     expect(await screen.findByTestId('answer-feedback')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('tab', { name: 'Review' }))
+    expect(screen.getByText('Answered Questions')).toBeInTheDocument()
   })
 })

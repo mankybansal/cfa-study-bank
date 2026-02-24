@@ -1,22 +1,34 @@
-# Source References (Fetched Feb 24, 2026)
+# 2026 CFA Alignment Sources
 
-These public references were used to align topic coverage, exam structure expectations, and quantitative emphasis for the question bank.
+Fetched on February 24, 2026 (US time) to align exam structure, topic coverage, and session sizing.
 
-1. CFA Program Level I Exam (topic areas and weights)
-- https://www.cfainstitute.org/en/programs/cfa/candidate/level-i
+## Official CFA Institute pages
 
-2. CFA Program Level II Exam (item set format and topic areas)
-- https://www.cfainstitute.org/en/programs/cfa/candidate/level-ii
-
-3. CFA Program Level III Exam (item set format, pathways, and topic areas)
-- https://www.cfainstitute.org/en/programs/cfa/candidate/level-iii
-
-4. CFA Program overview and candidate resources hub (current program updates)
+1. CFA Program overview
 - https://www.cfainstitute.org/en/programs/cfa
 
-5. Kaplan Schweser CFA exam prep overview (style benchmarking only; no verbatim copying)
+2. CFA Level I (question count and timing)
+- https://www.cfainstitute.org/en/programs/cfa/candidate/level-i
+- Used details: 180 questions; two 135-minute sessions.
+
+3. CFA Level II (item-set structure and timing)
+- https://www.cfainstitute.org/en/programs/cfa/candidate/level-ii
+- Used details: 22 item sets, 88 questions; two 132-minute sessions.
+
+4. CFA Level III (item-set + constructed response structure and timing)
+- https://www.cfainstitute.org/en/programs/cfa/candidate/level-iii
+- Used details: 11 item sets and 11 constructed-response sets; 44 item-set questions and 11 essay sets; two 132-minute sessions.
+
+5. CFA Program Candidate Resources (PSM requirement and candidate guidance)
+- https://www.cfainstitute.org/programs/cfa/candidate/resources
+
+## Third-party style reference (non-verbatim)
+
+6. Kaplan Schweser CFA overview (style benchmark only)
 - https://www.schweser.com/cfa
 
-Notes:
-- Questions are original and generated content; no proprietary question bank text is copied.
-- Public pages above were used for alignment and coverage framing, not direct replication.
+## Usage notes
+
+- Questions in this repository are original generated content.
+- No proprietary CFA Institute or Kaplan question-bank text is copied.
+- Sources above are used for alignment of scope and realism (format, timing, topic emphasis).

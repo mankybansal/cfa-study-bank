@@ -48,3 +48,13 @@ export interface StudyState {
   activeSession: QuizSession | null
   completedSessions: QuizSession[]
 }
+
+export interface AnsweredQuestionRecord {
+  questionId: string
+  sessionId: string
+  questionIndex: number
+  totalQuestions: number
+  answeredAt: string
+  selectedIndex: number
+  isCorrect: boolean
+}
