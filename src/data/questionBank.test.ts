@@ -74,4 +74,25 @@ describe('question bank', () => {
     const uniqueUrls = new Set(QUESTION_BANK.flatMap((q) => q.sources.map((s) => s.url)))
     expect(uniqueUrls.size).toBeGreaterThan(20)
   })
+
+  it('broadens formula coverage and downweights overused basics', () => {
+    const calcQuestions = QUESTION_BANK.filter((q) => q.id.startsWith('calc-'))
+    const byTemplate = new Map<string, number>()
+
+    for (const question of calcQuestions) {
+      const match = question.id.match(/^calc-[^-]+-(.+)-\d+$/)
+      const key = match?.[1]
+      if (!key) {
+        continue
+      }
+      byTemplate.set(key, (byTemplate.get(key) ?? 0) + 1)
+    }
+
+    expect(byTemplate.size).toBeGreaterThanOrEqual(30)
+
+    for (const key of ['hpr', 'pv', 'sample-sd']) {
+      const share = (byTemplate.get(key) ?? 0) / calcQuestions.length
+      expect(share).toBeLessThan(0.06)
+    }
+  })
 })

@@ -80,6 +80,69 @@ const TOPIC_ALIGNMENT_NOTES: Record<string, string> = {
   'Performance Measurement': 'Attribution and risk-adjusted performance interpretation are tested.',
 }
 
+const LEVEL_PREP_SOURCE_MAP: Record<CFALevel, SourceRef[]> = {
+  L1: [
+    {
+      title: 'SALT Solutions: CFA Level I Formula Sheet',
+      url: 'https://www.saltsolutions.com/blog/cfa-level-1-formula-sheet/',
+      note: 'Prep-provider formula checklist used to diversify quantitative coverage.',
+    },
+    {
+      title: '300Hours: CFA Level I Topic Hub',
+      url: 'https://300hours.com/c/cfa/cfa-level-1/',
+      note: 'Candidate-focused topic index and study sequencing references.',
+    },
+  ],
+  L2: [
+    {
+      title: 'SALT Solutions: CFA Level II Formula Sheet',
+      url: 'https://www.saltsolutions.com/blog/cfa-level-2-formula-sheet/',
+      note: 'Prep-provider formula references for valuation and derivatives depth.',
+    },
+    {
+      title: '300Hours: CFA Level II Topic Hub',
+      url: 'https://300hours.com/c/cfa/cfa-level-2/',
+      note: 'Candidate-focused coverage priorities and topic drill guidance.',
+    },
+  ],
+  L3: [
+    {
+      title: 'SALT Solutions: CFA Level III Study Plan',
+      url: 'https://www.saltsolutions.com/blog/cfa-level-3-study-plan/',
+      note: 'Prep-provider emphasis for constructed-response and PM-heavy coverage.',
+    },
+    {
+      title: '300Hours: CFA Level III Topic Hub',
+      url: 'https://300hours.com/c/cfa/cfa-level-3/',
+      note: 'Candidate-focused topic guidance and exam-day strategy context.',
+    },
+  ],
+}
+
+const LEVEL_COMMUNITY_SOURCE_MAP: Record<CFALevel, SourceRef[]> = {
+  L1: [
+    {
+      title: '300Hours: 20 Things I Wish I Knew Before CFA Exams',
+      url: 'https://300hours.com/20-things-i-wish-i-knew-before-the-cfa-exams/',
+      note: 'Candidate community perspective used as non-official signal for preparation pitfalls.',
+    },
+  ],
+  L2: [
+    {
+      title: '300Hours: CFA Curriculum Review',
+      url: 'https://300hours.com/cfa-curriculum-review/',
+      note: 'Candidate community review of topic emphasis and difficulty patterns.',
+    },
+  ],
+  L3: [
+    {
+      title: '300Hours: CFA Curriculum Changes 2026',
+      url: 'https://300hours.com/cfa-curriculum-changes-2026/',
+      note: 'Candidate community tracking of recent curriculum focus changes.',
+    },
+  ],
+}
+
 const TOPIC_SOURCE_MAP: Record<string, SourceRef[]> = {
   'Ethical and Professional Standards': [
     {
@@ -481,6 +544,159 @@ const TAG_SOURCE_MAP: Record<string, SourceRef[]> = {
       title: 'Investopedia: Foreign Exchange Risk',
       url: 'https://www.investopedia.com/terms/f/foreignexchangerisk.asp',
       note: 'Currency risk source and hedge rationale.',
+    },
+  ],
+  ear: [
+    {
+      title: 'CFI: Effective Annual Interest Rate (EAR)',
+      url: 'https://corporatefinanceinstitute.com/resources/wealth-management/effective-annual-interest-rate-ear/',
+      note: 'Compounding-frequency conversion for nominal-to-effective rates.',
+    },
+    {
+      title: 'CFA Refresher Reading 2025: Time Value of Money',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2025/time-value-money',
+      note: 'TVM and compounding conventions used in CFA quantitative items.',
+    },
+  ],
+  'expected-value': [
+    {
+      title: 'CFI: Expected Value',
+      url: 'https://corporatefinanceinstitute.com/resources/data-science/expected-value/',
+      note: 'Probability-weighted expected outcome framework.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Probability Trees and Conditional Expectations',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/probability-trees-and-conditional-expectations',
+      note: 'State-probability modeling and expectation calculations.',
+    },
+  ],
+  'fisher-relation': [
+    {
+      title: 'CFI: Fisher Equation',
+      url: 'https://corporatefinanceinstitute.com/resources/economics/fisher-equation/',
+      note: 'Nominal, real, and inflation relationship in rate decomposition.',
+    },
+    {
+      title: 'Investopedia: Fisher Effect',
+      url: 'https://www.investopedia.com/terms/f/fishereffect.asp',
+      note: 'Inflation-adjusted return interpretation.',
+    },
+  ],
+  'fx-rates': [
+    {
+      title: 'CFI: Cross Rate',
+      url: 'https://corporatefinanceinstitute.com/resources/foreign-exchange/cross-rate/',
+      note: 'Cross-currency conversion method used in economics/FX questions.',
+    },
+    {
+      title: 'Investopedia: Cross Rate',
+      url: 'https://www.investopedia.com/terms/c/crossrate.asp',
+      note: 'FX quotation and cross-rate interpretation.',
+    },
+  ],
+  dupont: [
+    {
+      title: 'CFI: DuPont Analysis',
+      url: 'https://corporatefinanceinstitute.com/resources/accounting/dupont-analysis/',
+      note: 'ROE decomposition by profitability, efficiency, and leverage.',
+    },
+  ],
+  wacc: [
+    {
+      title: 'CFI: What is WACC Formula?',
+      url: 'https://corporatefinanceinstitute.com/resources/valuation/what-is-wacc-formula/',
+      note: 'After-tax blended cost of capital for project hurdle rates.',
+    },
+    {
+      title: 'Investopedia: Weighted Average Cost of Capital (WACC)',
+      url: 'https://www.investopedia.com/terms/w/wacc.asp',
+      note: 'Capital budgeting discount rate structure and interpretation.',
+    },
+  ],
+  ddm: [
+    {
+      title: 'CFA Refresher Reading 2026: Discounted Dividend Valuation',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/discounted-dividend-valuation',
+      note: 'Dividend-discount intrinsic value framework.',
+    },
+    {
+      title: 'CFI: Dividend Discount Model',
+      url: 'https://corporatefinanceinstitute.com/resources/valuation/dividend-discount-model/',
+      note: 'Constant-growth and multi-stage dividend valuation mechanics.',
+    },
+  ],
+  'bond-pricing': [
+    {
+      title: 'Investopedia: Zero-Coupon Bond',
+      url: 'https://www.investopedia.com/terms/z/zero-couponbond.asp',
+      note: 'Discounted cash flow pricing for zero-coupon instruments.',
+    },
+  ],
+  'forward-rates': [
+    {
+      title: 'CFI: Forward Rates',
+      url: 'https://corporatefinanceinstitute.com/resources/fixed-income/forward-rates/',
+      note: 'Implied future short rates from spot-curve inputs.',
+    },
+    {
+      title: 'Investopedia: Forward Rate',
+      url: 'https://www.investopedia.com/terms/f/forwardrate.asp',
+      note: 'Forward-rate interpretation from term structure.',
+    },
+  ],
+  fra: [
+    {
+      title: 'Investopedia: Forward Rate Agreement (FRA)',
+      url: 'https://www.investopedia.com/terms/f/fra.asp',
+      note: 'Rate-lock contract payoff and settlement mechanics.',
+    },
+  ],
+  swaps: [
+    {
+      title: 'CFI: Interest Rate Swap',
+      url: 'https://corporatefinanceinstitute.com/resources/derivatives/interest-rate-swap/',
+      note: 'Fixed-vs-floating exchange valuation framework.',
+    },
+    {
+      title: 'Investopedia: Interest Rate Swap',
+      url: 'https://www.investopedia.com/terms/i/interestrateswap.asp',
+      note: 'Swap cash-flow and par-swap-rate mechanics.',
+    },
+  ],
+  'cap-rate': [
+    {
+      title: 'CFI: Cap Rate',
+      url: 'https://corporatefinanceinstitute.com/resources/valuation/cap-rate/',
+      note: 'Property value and NOI capitalization relationship.',
+    },
+    {
+      title: 'Investopedia: Capitalization Rate',
+      url: 'https://www.investopedia.com/terms/c/capitalizationrate.asp',
+      note: 'Real-estate return and valuation shorthand metric.',
+    },
+  ],
+  'portfolio-variance': [
+    {
+      title: 'Investopedia: Portfolio Variance',
+      url: 'https://www.investopedia.com/terms/p/portfolio-variance.asp',
+      note: 'Two-asset covariance-based variance aggregation.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Portfolio Risk and Return Part I',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/portfolio-risk-return-part-1',
+      note: 'Diversification and variance-covariance risk framework.',
+    },
+  ],
+  var: [
+    {
+      title: 'Investopedia: Value at Risk (VaR)',
+      url: 'https://www.investopedia.com/terms/v/var.asp',
+      note: 'Tail-loss quantile approximation for risk control.',
+    },
+    {
+      title: 'CFA Refresher Reading 2025: Introduction to Risk Management',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2025/introduction-risk-management',
+      note: 'Risk measurement context and limitations of summary metrics.',
     },
   ],
 }
@@ -1552,7 +1768,500 @@ const CALC_TEMPLATES: CalcTemplate[] = [
       }
     },
   },
+  {
+    key: 'effective-annual-rate',
+    level: 'L1',
+    topic: 'Quantitative Methods',
+    difficulty: 'medium',
+    build: (seed) => {
+      const nominal = numericInt(seed, 4, 14) / 100
+      const compounds = [2, 4, 12][numericInt(seed + 1, 0, 2)]
+      const ear = ((1 + nominal / compounds) ** compounds - 1) * 100
+      const { choices, correctIndex } = buildChoiceSet(ear, [0.42, -0.37, 0.79], seed, {
+        style: 'percent',
+        decimals: 2,
+      })
+
+      return {
+        stem: `A bank quotes a ${(nominal * 100).toFixed(2)}% nominal annual rate compounded ${compounds} times per year. Using \\(EAR=(1+\\frac{r_{nom}}{m})^m-1\\), the effective annual rate is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Convert nominal to effective using compounding frequency. EAR is ${round(ear, 2).toFixed(2)}%.`,
+        tags: ['tvm', 'ear', 'calculation'],
+        plot: {
+          kind: 'line',
+          title: 'Growth of $1 under Nominal Quote',
+          xLabel: 'Compounding periods elapsed',
+          yLabel: 'Value of $1',
+          points: Array.from({ length: compounds + 1 }, (_, idx) => ({
+            x: idx,
+            y: (1 + nominal / compounds) ** idx,
+          })),
+        },
+      }
+    },
+  },
+  {
+    key: 'expected-value',
+    level: 'L1',
+    topic: 'Quantitative Methods',
+    difficulty: 'medium',
+    build: (seed) => {
+      const p1 = numericInt(seed, 20, 45)
+      const p2 = numericInt(seed + 1, 20, 50 - (p1 - 20))
+      const p3 = 100 - p1 - p2
+      const r1 = numericInt(seed + 2, -10, 4)
+      const r2 = numericInt(seed + 3, 2, 10)
+      const r3 = numericInt(seed + 4, 8, 18)
+      const expected = (p1 * r1 + p2 * r2 + p3 * r3) / 100
+      const { choices, correctIndex } = buildChoiceSet(expected, [1.4, -1.1, 2.3], seed, {
+        style: 'percent',
+        decimals: 2,
+      })
+
+      return {
+        stem: `A three-state return distribution has probabilities ${p1}%, ${p2}%, and ${p3}%, with corresponding returns ${r1}%, ${r2}%, and ${r3}%. Expected return is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Expected return is the probability-weighted average: ${round(expected, 2).toFixed(2)}%.`,
+        tags: ['probability', 'expected-value', 'calculation'],
+        plot: {
+          kind: 'bar',
+          title: 'State Returns',
+          xLabel: 'State',
+          yLabel: 'Return %',
+          points: [
+            { x: 1, y: r1, label: `${p1}%` },
+            { x: 2, y: r2, label: `${p2}%` },
+            { x: 3, y: r3, label: `${p3}%` },
+          ],
+        },
+      }
+    },
+  },
+  {
+    key: 'fisher-real-rate',
+    level: 'L1',
+    topic: 'Economics',
+    difficulty: 'easy',
+    build: (seed) => {
+      const nominal = numericInt(seed, 2, 10) / 100
+      const inflation = numericInt(seed + 1, 1, 7) / 100
+      const real = ((1 + nominal) / (1 + inflation) - 1) * 100
+      const { choices, correctIndex } = buildChoiceSet(real, [0.8, -0.7, 1.5], seed, {
+        style: 'percent',
+        decimals: 2,
+      })
+
+      return {
+        stem: `A one-year nominal yield is ${(nominal * 100).toFixed(2)}% and expected inflation is ${(inflation * 100).toFixed(2)}%. Using the Fisher relation, real rate is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Compute real rate as \\(\\frac{1+r_n}{1+\\pi}-1\\). Result is ${round(real, 2).toFixed(2)}%.`,
+        tags: ['fisher-relation', 'calculation'],
+      }
+    },
+  },
+  {
+    key: 'fx-cross-rate',
+    level: 'L2',
+    topic: 'Economics',
+    difficulty: 'medium',
+    build: (seed) => {
+      const eurUsd = round(numeric(seed, 1.02, 1.28), 4)
+      const usdJpy = round(numeric(seed + 1, 102, 158), 2)
+      const eurJpy = eurUsd * usdJpy
+      const { choices, correctIndex } = buildChoiceSet(eurJpy, [2.8, -2.5, 5.4], seed, {
+        style: 'number',
+        decimals: 2,
+        suffix: 'JPY per EUR',
+      })
+
+      const xVals = [usdJpy - 8, usdJpy - 4, usdJpy, usdJpy + 4, usdJpy + 8]
+      return {
+        stem: `Spot quotes are EUR/USD = ${eurUsd.toFixed(4)} and USD/JPY = ${usdJpy.toFixed(2)}. Implied EUR/JPY cross rate is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Cross rate uses chain conversion: EUR/JPY = (EUR/USD) × (USD/JPY) = ${round(eurJpy, 2).toFixed(2)}.`,
+        tags: ['fx-rates', 'currency-management', 'calculation'],
+        plot: {
+          kind: 'line',
+          title: 'EUR/JPY Sensitivity to USD/JPY',
+          xLabel: 'USD/JPY',
+          yLabel: 'EUR/JPY',
+          points: xVals.map((x) => ({ x, y: eurUsd * x })),
+        },
+      }
+    },
+  },
+  {
+    key: 'dupont-roe',
+    level: 'L1',
+    topic: 'Financial Statement Analysis',
+    difficulty: 'medium',
+    build: (seed) => {
+      const netMargin = numericInt(seed, 6, 16) / 100
+      const turnover = numeric(seed + 1, 0.6, 1.6)
+      const equityMultiplier = numeric(seed + 2, 1.2, 3.2)
+      const roe = netMargin * turnover * equityMultiplier * 100
+      const { choices, correctIndex } = buildChoiceSet(roe, [1.8, -1.4, 3.2], seed, {
+        style: 'percent',
+        decimals: 2,
+      })
+
+      return {
+        stem: `A firm has net profit margin ${(netMargin * 100).toFixed(2)}%, asset turnover ${turnover.toFixed(2)}x, and equity multiplier ${equityMultiplier.toFixed(2)}x. Using three-step DuPont, ROE is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `\\(ROE = Net\\ Margin \\times Asset\\ Turnover \\times Equity\\ Multiplier\\) = ${round(roe, 2).toFixed(2)}%.`,
+        tags: ['financial-statements', 'dupont', 'ratio-analysis', 'calculation'],
+        plot: {
+          kind: 'bar',
+          title: 'DuPont Drivers',
+          xLabel: 'Component',
+          yLabel: 'Value',
+          points: [
+            { x: 1, y: netMargin * 100, label: 'Margin %' },
+            { x: 2, y: turnover, label: 'Turnover x' },
+            { x: 3, y: equityMultiplier, label: 'Eq Mult x' },
+          ],
+        },
+      }
+    },
+  },
+  {
+    key: 'wacc',
+    level: 'L2',
+    topic: 'Corporate Issuers',
+    difficulty: 'hard',
+    build: (seed) => {
+      const weightE = numeric(seed, 0.45, 0.8)
+      const weightD = 1 - weightE
+      const re = numericInt(seed + 1, 8, 16) / 100
+      const rd = numericInt(seed + 2, 3, 9) / 100
+      const tax = numericInt(seed + 3, 18, 35) / 100
+      const wacc = (weightE * re + weightD * rd * (1 - tax)) * 100
+      const { choices, correctIndex } = buildChoiceSet(wacc, [0.9, -0.8, 1.6], seed, {
+        style: 'percent',
+        decimals: 2,
+      })
+
+      return {
+        stem: `A firm has capital weights of ${(weightE * 100).toFixed(1)}% equity and ${(weightD * 100).toFixed(1)}% debt. Cost of equity is ${(re * 100).toFixed(1)}%, pretax cost of debt is ${(rd * 100).toFixed(1)}%, and tax rate is ${(tax * 100).toFixed(1)}%. WACC is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `\\(WACC=w_Er_E+w_Dr_D(1-T)\\) gives ${round(wacc, 2).toFixed(2)}%.`,
+        tags: ['wacc', 'capital-budgeting', 'calculation'],
+      }
+    },
+  },
+  {
+    key: 'gordon-growth-ddm',
+    level: 'L2',
+    topic: 'Equity Investments',
+    difficulty: 'medium',
+    build: (seed) => {
+      const d1 = numeric(seed, 1.2, 5.8)
+      const r = numericInt(seed + 1, 8, 16) / 100
+      const g = numericInt(seed + 2, 2, Math.max(3, Math.round(r * 100) - 2)) / 100
+      const value = d1 / Math.max(0.0001, r - g)
+      const { choices, correctIndex } = buildChoiceSet(value, [4.6, -5.1, 8.2], seed, {
+        style: 'currency',
+        decimals: 2,
+      })
+
+      return {
+        stem: `A stock is expected to pay next-year dividend \\(D_1=$${d1.toFixed(2)}\\). Required return is ${(r * 100).toFixed(1)}% and constant dividend growth is ${(g * 100).toFixed(1)}%. Under Gordon growth DDM, intrinsic value is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `\\(V_0=\\frac{D_1}{r-g}\\) implies value of $${round(value, 2).toFixed(2)}.`,
+        tags: ['equity-valuation', 'ddm', 'calculation'],
+      }
+    },
+  },
+  {
+    key: 'zero-coupon-price',
+    level: 'L1',
+    topic: 'Fixed Income',
+    difficulty: 'medium',
+    build: (seed) => {
+      const par = 1000
+      const years = numericInt(seed, 2, 10)
+      const spot = numericInt(seed + 1, 2, 8) / 100
+      const price = par / (1 + spot) ** years
+      const { choices, correctIndex } = buildChoiceSet(price, [25, -22, 48], seed, {
+        style: 'currency',
+        decimals: 2,
+      })
+
+      return {
+        stem: `A zero-coupon bond with par $${par} matures in ${years} years. If the annual spot rate for that maturity is ${(spot * 100).toFixed(2)}%, the bond price is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Price a zero using \\(P=\\frac{FV}{(1+s)^n}\\). Result: $${round(price, 2).toFixed(2)}.`,
+        tags: ['bond-pricing', 'calculation'],
+        plot: {
+          kind: 'line',
+          title: 'Zero-Coupon Price by Maturity',
+          xLabel: 'Maturity (years)',
+          yLabel: 'Price',
+          points: Array.from({ length: Math.min(8, years) }, (_, idx) => {
+            const n = idx + 1
+            return { x: n, y: par / (1 + spot) ** n }
+          }),
+        },
+      }
+    },
+  },
+  {
+    key: 'implied-forward-rate',
+    level: 'L2',
+    topic: 'Fixed Income',
+    difficulty: 'hard',
+    build: (seed) => {
+      const s1 = numericInt(seed, 2, 6) / 100
+      const s2 = s1 + numericInt(seed + 1, 1, 4) / 100
+      const forward = ((1 + s2) ** 2 / (1 + s1) - 1) * 100
+      const { choices, correctIndex } = buildChoiceSet(forward, [0.8, -0.7, 1.5], seed, {
+        style: 'percent',
+        decimals: 2,
+      })
+
+      return {
+        stem: `The 1-year spot rate is ${(s1 * 100).toFixed(2)}% and 2-year spot rate is ${(s2 * 100).toFixed(2)}%. The one-year forward rate one year from now \\(f_{1,1}\\) is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Solve \\((1+s_2)^2=(1+s_1)(1+f_{1,1})\\). Forward rate is ${round(forward, 2).toFixed(2)}%.`,
+        tags: ['forward-rates', 'calculation'],
+        plot: {
+          kind: 'line',
+          title: 'Spot Curve Snapshot',
+          xLabel: 'Maturity (years)',
+          yLabel: 'Rate %',
+          points: [
+            { x: 1, y: s1 * 100 },
+            { x: 2, y: s2 * 100 },
+          ],
+        },
+      }
+    },
+  },
+  {
+    key: 'fra-settlement',
+    level: 'L2',
+    topic: 'Derivatives',
+    difficulty: 'hard',
+    build: (seed) => {
+      const notional = numericInt(seed, 5, 35) * 1_000_000
+      const contract = numericInt(seed + 1, 2, 6) / 100
+      const reference = contract + numericInt(seed + 2, -2, 3) / 100
+      const days = [90, 180][numericInt(seed + 3, 0, 1)]
+      const tau = days / 360
+      const settlement = ((reference - contract) * tau * notional) / (1 + reference * tau)
+      const { choices, correctIndex } = buildChoiceSet(settlement, [28_000, -24_000, 52_000], seed, {
+        style: 'currency',
+        decimals: 0,
+      })
+
+      return {
+        stem: `A long FRA has notional $${notional.toLocaleString()}, contract rate ${(contract * 100).toFixed(2)}%, reference rate at settlement ${(reference * 100).toFixed(2)}%, and accrual ${days}/360. FRA settlement amount (to the long) is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Use discounted settlement: \\(\\frac{(R_{ref}-R_K)\\tau N}{1+R_{ref}\\tau}\\) = $${Math.round(settlement).toLocaleString()}.`,
+        tags: ['fra', 'forwards', 'calculation'],
+      }
+    },
+  },
+  {
+    key: 'swap-par-rate',
+    level: 'L2',
+    topic: 'Derivatives',
+    difficulty: 'hard',
+    build: (seed) => {
+      const years = numericInt(seed, 3, 5)
+      const base = numeric(seed + 1, 0.025, 0.05)
+      const slope = numeric(seed + 2, -0.003, 0.007)
+      const discountFactors = Array.from({ length: years }, (_, idx) => {
+        const year = idx + 1
+        const spot = Math.max(0.005, base + slope * year)
+        return 1 / (1 + spot) ** year
+      })
+      const parSwap = ((1 - discountFactors[discountFactors.length - 1]) / discountFactors.reduce((sum, x) => sum + x, 0)) * 100
+      const { choices, correctIndex } = buildChoiceSet(parSwap, [0.45, -0.41, 0.88], seed, {
+        style: 'percent',
+        decimals: 2,
+      })
+
+      return {
+        stem: `For an annual-pay ${years}-year swap, discount factors for years 1..${years} are ${discountFactors.map((df) => df.toFixed(4)).join(', ')}. The par fixed swap rate is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Par swap rate is \\(S=\\frac{1-DF_n}{\\sum_{i=1}^{n} DF_i}\\). Result is ${round(parSwap, 2).toFixed(2)}%.`,
+        tags: ['swaps', 'derivatives', 'calculation'],
+        plot: {
+          kind: 'line',
+          title: 'Discount Factors by Maturity',
+          xLabel: 'Year',
+          yLabel: 'Discount factor',
+          points: discountFactors.map((df, idx) => ({ x: idx + 1, y: df })),
+        },
+      }
+    },
+  },
+  {
+    key: 'cap-rate-value',
+    level: 'L1',
+    topic: 'Alternative Investments',
+    difficulty: 'easy',
+    build: (seed) => {
+      const noi = numericInt(seed, 280_000, 1_500_000)
+      const capRate = numeric(seed + 1, 0.045, 0.11)
+      const value = noi / capRate
+      const { choices, correctIndex } = buildChoiceSet(value, [160_000, -140_000, 310_000], seed, {
+        style: 'currency',
+        decimals: 0,
+      })
+
+      const caps = [capRate - 0.01, capRate - 0.005, capRate, capRate + 0.005, capRate + 0.01]
+      return {
+        stem: `A property has stabilized annual NOI of $${noi.toLocaleString()}. If market cap rate is ${(capRate * 100).toFixed(2)}%, estimated value is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Capitalization approach uses \\(Value=\\frac{NOI}{Cap\\ Rate}\\). Estimated value is $${Math.round(value).toLocaleString()}.`,
+        tags: ['cap-rate', 'calculation'],
+        plot: {
+          kind: 'line',
+          title: 'Value vs Cap Rate',
+          xLabel: 'Cap rate %',
+          yLabel: 'Implied value ($mm)',
+          points: caps.map((rate) => ({ x: rate * 100, y: noi / Math.max(0.0001, rate) / 1_000_000 })),
+        },
+      }
+    },
+  },
+  {
+    key: 'portfolio-volatility',
+    level: 'L2',
+    topic: 'Portfolio Management',
+    difficulty: 'hard',
+    build: (seed) => {
+      const weightA = numeric(seed, 0.25, 0.75)
+      const weightB = 1 - weightA
+      const sigmaA = numericInt(seed + 1, 10, 26) / 100
+      const sigmaB = numericInt(seed + 2, 8, 22) / 100
+      const rho = numeric(seed + 3, -0.25, 0.85)
+      const variance = weightA ** 2 * sigmaA ** 2 + weightB ** 2 * sigmaB ** 2 + 2 * weightA * weightB * sigmaA * sigmaB * rho
+      const sigmaP = Math.sqrt(Math.max(0, variance)) * 100
+      const { choices, correctIndex } = buildChoiceSet(sigmaP, [1.1, -0.9, 2.0], seed, {
+        style: 'percent',
+        decimals: 2,
+      })
+
+      const rhos = [-0.5, -0.2, 0.1, 0.4, 0.7]
+      return {
+        stem: `Portfolio weights are ${(weightA * 100).toFixed(1)}% in A and ${(weightB * 100).toFixed(1)}% in B. Volatilities are ${(sigmaA * 100).toFixed(1)}% and ${(sigmaB * 100).toFixed(1)}%, with correlation ${rho.toFixed(2)}. Portfolio volatility is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Apply \\(\\sigma_P=\\sqrt{w_A^2\\sigma_A^2+w_B^2\\sigma_B^2+2w_Aw_B\\sigma_A\\sigma_B\\rho}\\). Result: ${round(sigmaP, 2).toFixed(2)}%.`,
+        tags: ['portfolio-variance', 'statistics', 'calculation'],
+        plot: {
+          kind: 'line',
+          title: 'Portfolio Volatility vs Correlation',
+          xLabel: 'Correlation',
+          yLabel: 'Volatility %',
+          points: rhos.map((corr) => ({
+            x: corr,
+            y: Math.sqrt(
+              Math.max(
+                0,
+                weightA ** 2 * sigmaA ** 2 +
+                  weightB ** 2 * sigmaB ** 2 +
+                  2 * weightA * weightB * sigmaA * sigmaB * corr,
+              ),
+            ) * 100,
+          })),
+        },
+      }
+    },
+  },
+  {
+    key: 'parametric-var',
+    level: 'L3',
+    topic: 'Risk Management',
+    difficulty: 'medium',
+    build: (seed) => {
+      const portfolio = numericInt(seed, 25, 120) * 1_000_000
+      const sigma = numeric(seed + 1, 0.006, 0.025)
+      const z = 1.65
+      const var1d = portfolio * sigma * z
+      const { choices, correctIndex } = buildChoiceSet(var1d, [220_000, -180_000, 410_000], seed, {
+        style: 'currency',
+        decimals: 0,
+      })
+
+      return {
+        stem: `A portfolio value is $${portfolio.toLocaleString()} and estimated one-day volatility is ${(sigma * 100).toFixed(2)}%. Using a normal approximation with one-tailed \\(z=1.65\\), one-day 95% VaR is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Parametric VaR approximation: \\(VaR \\approx z\\sigma V\\). Estimated VaR is $${Math.round(var1d).toLocaleString()}.`,
+        tags: ['var', 'risk-management', 'calculation'],
+        plot: {
+          kind: 'bar',
+          title: 'Risk Inputs',
+          xLabel: 'Input',
+          yLabel: 'Value',
+          points: [
+            { x: 1, y: portfolio / 1_000_000, label: 'Portfolio ($mm)' },
+            { x: 2, y: sigma * 100, label: 'Sigma %' },
+            { x: 3, y: z, label: 'z-score' },
+          ],
+        },
+      }
+    },
+  },
 ]
+
+const CALC_TOPIC_WEIGHT_MAP: Record<string, number> = {
+  'Ethical and Professional Standards': 0.6,
+  'Quantitative Methods': 0.9,
+  Economics: 1.0,
+  'Financial Statement Analysis': 1.25,
+  'Corporate Issuers': 1.1,
+  'Equity Investments': 1.15,
+  'Fixed Income': 1.2,
+  Derivatives: 1.15,
+  'Alternative Investments': 0.9,
+  'Portfolio Management': 1.0,
+  'Behavioral Finance': 0.75,
+  'Capital Market Expectations': 0.8,
+  'Asset Allocation': 0.9,
+  'Fixed Income Portfolio Management': 1.0,
+  'Equity Portfolio Management': 1.0,
+  'Derivatives and Currency Management': 1.0,
+  'Risk Management': 0.9,
+  'Performance Measurement': 0.95,
+}
+
+const CALC_KEY_WEIGHT_OVERRIDES: Record<string, number> = {
+  hpr: 0.42,
+  pv: 0.42,
+  'sample-sd': 0.42,
+  bayes: 0.8,
+  sharpe: 0.8,
+}
+
+function getCalcTemplateWeight(template: CalcTemplate): number {
+  const topicWeight = CALC_TOPIC_WEIGHT_MAP[template.topic] ?? 1
+  const keyWeight = CALC_KEY_WEIGHT_OVERRIDES[template.key] ?? 1
+  return Math.max(0.2, topicWeight * keyWeight)
+}
+
+const WEIGHTED_CALC_TEMPLATE_POOL: CalcTemplate[] = seededShuffle(
+  CALC_TEMPLATES.flatMap((template) =>
+    Array.from({ length: Math.max(1, Math.round(getCalcTemplateWeight(template) * 10)) }, () => template),
+  ),
+  'weighted-calc-template-pool-v2',
+)
 
 function slugify(input: string): string {
   return input
@@ -1569,6 +2278,15 @@ function buildConceptStem(topic: string, concept: string, variant: number): stri
 function buildSources(level: CFALevel, topic: string, tags: string[]): SourceRef[] {
   const topicSources = TOPIC_SOURCE_MAP[topic] ?? []
   const tagSources = tags.flatMap((tag) => TAG_SOURCE_MAP[tag] ?? [])
+  const prepSources = LEVEL_PREP_SOURCE_MAP[level] ?? []
+  const communitySources = LEVEL_COMMUNITY_SOURCE_MAP[level] ?? []
+  const personalizationKey = `${level}|${topic}|${tags.join('|')}`
+  const prepSource =
+    prepSources.length > 0 ? prepSources[hashSeed(`prep-${personalizationKey}`) % prepSources.length] : undefined
+  const communitySource =
+    communitySources.length > 0
+      ? communitySources[hashSeed(`community-${personalizationKey}`) % communitySources.length]
+      : undefined
 
   const references: SourceRef[] = [
     {
@@ -1578,6 +2296,8 @@ function buildSources(level: CFALevel, topic: string, tags: string[]): SourceRef
     },
     ...topicSources,
     ...tagSources,
+    ...(prepSource ? [prepSource] : []),
+    ...(communitySource ? [communitySource] : []),
     {
       title: 'CFA Candidate Resources',
       url: CFA_CANDIDATE_RESOURCES_URL,
@@ -1597,7 +2317,7 @@ function buildSources(level: CFALevel, topic: string, tags: string[]): SourceRef
     }
   }
 
-  return [...unique.values()].slice(0, 6)
+  return [...unique.values()].slice(0, 7)
 }
 
 function buildConceptQuestion(level: CFALevel, item: TopicConcept, variant: number): Question {
@@ -1651,7 +2371,7 @@ function mixQuestionOrder(questions: Question[]): Question[] {
       (q) =>
         q.topic !== previous.topic &&
         q.level !== previous.level &&
-        q.id.split('-')[2] !== previous.id.split('-')[2],
+        q.tags[2] !== previous.tags[2],
     )
 
     if (pick === -1) {
@@ -1673,14 +2393,12 @@ export function generateQuestionBank(target = 2500): Question[] {
   const calcTarget = Math.floor(target * 0.72)
 
   let seed = 1
+  let calcPoolIndex = 0
   while (output.length < calcTarget) {
-    for (const template of CALC_TEMPLATES) {
-      output.push(buildCalcQuestion(template, seed))
-      seed += 1
-      if (output.length >= calcTarget) {
-        break
-      }
-    }
+    const template = WEIGHTED_CALC_TEMPLATE_POOL[calcPoolIndex % WEIGHTED_CALC_TEMPLATE_POOL.length]
+    output.push(buildCalcQuestion(template, seed))
+    seed += 1
+    calcPoolIndex += 1
   }
 
   let variant = 0
