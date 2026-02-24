@@ -34,24 +34,24 @@ function parseMath(text: string): MathSegment[] {
   const segments: MathSegment[] = []
   let i = 0
   while (i < text.length) {
-    if (text.startsWith('$$', i)) {
-      const end = text.indexOf('$$', i + 2)
+    if (text.startsWith('\\[', i)) {
+      const end = text.indexOf('\\]', i + 2)
       if (end !== -1) {
         segments.push({ type: 'block', value: text.slice(i + 2, end) })
         i = end + 2
         continue
       }
     }
-    if (text[i] === '$') {
-      const end = text.indexOf('$', i + 1)
+    if (text.startsWith('\\(', i)) {
+      const end = text.indexOf('\\)', i + 2)
       if (end !== -1) {
-        segments.push({ type: 'inline', value: text.slice(i + 1, end) })
-        i = end + 1
+        segments.push({ type: 'inline', value: text.slice(i + 2, end) })
+        i = end + 2
         continue
       }
     }
-    const nextInline = text.indexOf('$', i)
-    const nextBlock = text.indexOf('$$', i)
+    const nextInline = text.indexOf('\\(', i)
+    const nextBlock = text.indexOf('\\[', i)
     const next = [nextInline, nextBlock].filter((x) => x >= 0).sort((a, b) => a - b)[0]
     const end = next === undefined ? text.length : next
     if (end === i) {

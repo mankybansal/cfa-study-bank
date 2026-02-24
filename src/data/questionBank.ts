@@ -384,10 +384,10 @@ const CALC_TEMPLATES: CalcTemplate[] = [
       const hpr = ((sell - buy + dividend) / buy) * 100
       const { choices, correctIndex } = orderedChoices(hpr, [2.6, -2.1, 4.4], '%')
       return {
-        stem: `An investor buys ${shares} shares at $${buy.toFixed(2)}, sells at $${sell.toFixed(2)}, and receives $${dividend.toFixed(2)} dividend per share. Using $HPR=\\\\frac{P_1-P_0+D_1}{P_0}$, holding period return is closest to:`,
+        stem: `An investor buys ${shares} shares at $${buy.toFixed(2)}, sells at $${sell.toFixed(2)}, and receives $${dividend.toFixed(2)} dividend per share. Using \\(HPR=\\\\frac{P_1-P_0+D_1}{P_0}\\), holding period return is closest to:`,
         choices,
         correctIndex,
-        explanation: `Apply $HPR=\\\\frac{P_1-P_0+D_1}{P_0}$. Result: ${round(hpr, 2).toFixed(2)}%.`,
+        explanation: `Apply \\(HPR=\\\\frac{P_1-P_0+D_1}{P_0}\\). Result: ${round(hpr, 2).toFixed(2)}%.`,
         tags: ['returns', 'calculation'],
       }
     },
@@ -404,10 +404,10 @@ const CALC_TEMPLATES: CalcTemplate[] = [
       const pv = fv / (1 + r) ** n
       const { choices, correctIndex } = orderedChoices(pv, [260, -320, 590])
       return {
-        stem: `A cash flow of $${fv.toLocaleString()} is expected in ${n} years. At ${(r * 100).toFixed(1)}% annual discount rate, using $PV=\\\\frac{FV}{(1+r)^n}$, present value is closest to:`,
+        stem: `A cash flow of $${fv.toLocaleString()} is expected in ${n} years. At ${(r * 100).toFixed(1)}% annual discount rate, using \\(PV=\\\\frac{FV}{(1+r)^n}\\), present value is closest to:`,
         choices,
         correctIndex,
-        explanation: `Compute with $PV=\\\\frac{FV}{(1+r)^n}$. Present value is $${round(pv, 2).toFixed(2)}.`,
+        explanation: `Compute with \\(PV=\\\\frac{FV}{(1+r)^n}\\). Present value is $${round(pv, 2).toFixed(2)}.`,
         tags: ['tvm', 'discounting', 'calculation'],
       }
     },
@@ -508,10 +508,10 @@ const CALC_TEMPLATES: CalcTemplate[] = [
       const required = (rf + beta * (rm - rf)) * 100
       const { choices, correctIndex } = orderedChoices(required, [1.2, -1.1, 2.1], '%')
       return {
-        stem: `Using CAPM with $R_f=${(rf * 100).toFixed(1)}\\\\%$, $R_m=${(rm * 100).toFixed(1)}\\\\%$, and $\\\\beta=${beta.toFixed(2)}$, required return is closest to:`,
+        stem: `Using CAPM with \\(R_f=${(rf * 100).toFixed(1)}\\\\%\\), \\(R_m=${(rm * 100).toFixed(1)}\\\\%\\), and \\(\\\\beta=${beta.toFixed(2)}\\), required return is closest to:`,
         choices,
         correctIndex,
-        explanation: `Use $E(R_i)=R_f+\\\\beta_i(R_m-R_f)$. Required return is ${round(required, 2).toFixed(2)}%.`,
+        explanation: `Use \\(E(R_i)=R_f+\\\\beta_i(R_m-R_f)\\). Required return is ${round(required, 2).toFixed(2)}%.`,
         tags: ['capm', 'required-return', 'calculation'],
       }
     },
@@ -528,10 +528,10 @@ const CALC_TEMPLATES: CalcTemplate[] = [
       const pct = (-md * dy + 0.5 * cx * dy * dy) * 100
       const { choices, correctIndex } = orderedChoices(pct, [0.35, -0.45, 0.61], '%')
       return {
-        stem: `Bond modified duration ${md.toFixed(2)}, convexity ${cx.toFixed(2)}. If yield rises ${(dy * 10000).toFixed(0)} bps, using $\\\\frac{\\\\Delta P}{P}\\\\approx -D\\\\Delta y+\\\\tfrac12 C(\\\\Delta y)^2$, estimated % price change is closest to:`,
+        stem: `Bond modified duration ${md.toFixed(2)}, convexity ${cx.toFixed(2)}. If yield rises ${(dy * 10000).toFixed(0)} bps, using \\(\\\\frac{\\\\Delta P}{P}\\\\approx -D\\\\Delta y+\\\\tfrac12 C(\\\\Delta y)^2\\), estimated % price change is closest to:`,
         choices,
         correctIndex,
-        explanation: `Apply $\\\\frac{\\\\Delta P}{P}\\\\approx -D\\\\Delta y+\\\\tfrac12 C(\\\\Delta y)^2$. Estimate: ${round(pct, 2).toFixed(2)}%.`,
+        explanation: `Apply \\(\\\\frac{\\\\Delta P}{P}\\\\approx -D\\\\Delta y+\\\\tfrac12 C(\\\\Delta y)^2\\). Estimate: ${round(pct, 2).toFixed(2)}%.`,
         tags: ['duration', 'convexity', 'calculation'],
       }
     },
@@ -650,10 +650,10 @@ const CALC_TEMPLATES: CalcTemplate[] = [
       const y = intercept + slope * x
       const { choices, correctIndex } = orderedChoices(y, [1.2, -1.1, 2.2])
       return {
-        stem: `A regression line shown in the plot has intercept ${intercept.toFixed(2)} and slope ${slope.toFixed(2)}. At $x=${x.toFixed(0)}$, fitted $y$-value is closest to:`,
+        stem: `A regression line shown in the plot has intercept ${intercept.toFixed(2)} and slope ${slope.toFixed(2)}. At \\(x=${x.toFixed(0)}\\), fitted \\(y\\)-value is closest to:`,
         choices,
         correctIndex,
-        explanation: `From line equation $y = a + bx$, fitted value is $${round(y, 2).toFixed(2)}$.`,
+        explanation: `From line equation \\(y = a + bx\\), fitted value is ${round(y, 2).toFixed(2)}.`,
         tags: ['graph-interpretation', 'regression', 'calculation'],
         plot: {
           title: 'Regression Line',
