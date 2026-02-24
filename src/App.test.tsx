@@ -26,6 +26,10 @@ describe('App', () => {
 
     await user.click(options[0])
     expect(await screen.findByTestId('answer-feedback')).toBeInTheDocument()
+    expect(screen.getByTestId('question-sources')).toBeInTheDocument()
+
+    await user.click(screen.getByTestId('back-main'))
+    expect(screen.getByText('Session Setup')).toBeInTheDocument()
 
     await user.click(screen.getByRole('tab', { name: 'Review' }))
     expect(screen.getByText('Answered Questions')).toBeInTheDocument()

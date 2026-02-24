@@ -32,7 +32,7 @@ describe('question bank', () => {
 
   it('includes substantial visual questions', () => {
     const withPlot = QUESTION_BANK.filter((q) => q.plot !== undefined).length
-    expect(withPlot / QUESTION_BANK.length).toBeGreaterThan(0.3)
+    expect(withPlot / QUESTION_BANK.length).toBeGreaterThan(0.4)
   })
 
   it('reduces immediate sequential repetition by topic', () => {
@@ -49,5 +49,14 @@ describe('question bank', () => {
     }
 
     expect(longestRun).toBeLessThan(4)
+  })
+
+  it('includes official source links per question', () => {
+    for (const question of QUESTION_BANK) {
+      expect(question.sources.length).toBeGreaterThanOrEqual(3)
+      expect(
+        question.sources.some((source) => source.url.includes('cfainstitute.org')),
+      ).toBeTruthy()
+    }
   })
 })

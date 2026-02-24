@@ -13,6 +13,12 @@ type ValueFormat = {
   suffix?: string
 }
 
+type SourceRef = {
+  title: string
+  url: string
+  note: string
+}
+
 type CalcTemplate = {
   key: string
   level: CFALevel
@@ -32,6 +38,39 @@ type CalcTemplate = {
       points: Array<{ x: number; y: number; label?: string }>
     }
   }
+}
+
+const LEVEL_SOURCE_URLS: Record<CFALevel, string> = {
+  L1: 'https://www.cfainstitute.org/en/programs/cfa/candidate/level-i',
+  L2: 'https://www.cfainstitute.org/en/programs/cfa/candidate/level-ii',
+  L3: 'https://www.cfainstitute.org/en/programs/cfa/candidate/level-iii',
+}
+
+const LEVEL_SOURCE_TITLES: Record<CFALevel, string> = {
+  L1: 'CFA Level I Candidate Page',
+  L2: 'CFA Level II Candidate Page',
+  L3: 'CFA Level III Candidate Page',
+}
+
+const TOPIC_ALIGNMENT_NOTES: Record<string, string> = {
+  'Ethical and Professional Standards': 'CFA standards and ethical application are core in all levels.',
+  'Quantitative Methods': 'CFA quantitative methods include probability, statistics, and regression usage.',
+  Economics: 'Macroeconomic and microeconomic concepts are tested with application context.',
+  'Financial Statement Analysis': 'Interpretation and ratio-based analysis are part of exam expectations.',
+  'Corporate Issuers': 'Capital budgeting, leverage, and governance concepts are tested.',
+  'Equity Investments': 'Valuation and market interpretation are core equity competencies.',
+  'Fixed Income': 'Yield measures, duration, and bond risk concepts are exam-relevant.',
+  Derivatives: 'Forward/futures/options pricing and risk-management use are tested.',
+  'Alternative Investments': 'Alternative asset characteristics and valuation tradeoffs are tested.',
+  'Portfolio Management': 'Portfolio risk/return, performance, and benchmark concepts are central.',
+  'Behavioral Finance': 'Behavioral biases are tested primarily in higher-level portfolio contexts.',
+  'Capital Market Expectations': 'Scenario building and expectation formation are expected skills.',
+  'Asset Allocation': 'Strategic and tactical allocation decisions are tested in applied settings.',
+  'Fixed Income Portfolio Management': 'Liability-aware bond portfolio decisions are in scope.',
+  'Equity Portfolio Management': 'Active/passive and alpha/beta portfolio decisions are relevant.',
+  'Derivatives and Currency Management': 'Hedging overlays and currency management are tested.',
+  'Risk Management': 'Tail risk, stress testing, and integrated risk control are expected.',
+  'Performance Measurement': 'Attribution and risk-adjusted performance interpretation are tested.',
 }
 
 const LEVEL_TOPIC_CONCEPTS: Record<CFALevel, TopicConcept[]> = {
@@ -1115,6 +1154,38 @@ function buildConceptStem(topic: string, concept: string, variant: number): stri
   return template.replace('{topic}', topic).replace('{concept}', concept)
 }
 
+function buildSources(level: CFALevel, topic: string, tags: string[]): SourceRef[] {
+  const quantOrCalc = tags.includes('calculation') || tags.includes('statistics')
+
+  const refs: SourceRef[] = [
+    {
+      title: LEVEL_SOURCE_TITLES[level],
+      url: LEVEL_SOURCE_URLS[level],
+      note: 'Official CFA Institute level page with current exam format and topic-weight guidance.',
+    },
+    {
+      title: 'CFA Program Overview',
+      url: 'https://www.cfainstitute.org/en/programs/cfa',
+      note: 'Official scope for candidate pathway, curriculum, and assessment expectations.',
+    },
+    {
+      title: 'CFA Candidate Resources',
+      url: 'https://www.cfainstitute.org/programs/cfa-program/candidate-resources',
+      note: TOPIC_ALIGNMENT_NOTES[topic] ?? `Curriculum-aligned topic coverage reference for ${topic}.`,
+    },
+  ]
+
+  if (quantOrCalc) {
+    refs.push({
+      title: 'CFA Practical Skills Modules',
+      url: 'https://www.cfainstitute.org/programs/cfa/candidate/resources',
+      note: 'Quantitative and applied analysis expectations that support formula-based practice.',
+    })
+  }
+
+  return refs
+}
+
 function buildConceptQuestion(level: CFALevel, item: TopicConcept, variant: number): Question {
   const options = [item.correct, ...item.wrong]
   const correctIndex = variant % 4
@@ -1130,6 +1201,7 @@ function buildConceptQuestion(level: CFALevel, item: TopicConcept, variant: numb
     correctIndex,
     explanation: `Correct because ${item.correct.toLowerCase()} This aligns with CFA curriculum expectations for ${item.topic.toLowerCase()}.`,
     tags: [level, item.topic, item.concept, 'conceptual'],
+    sources: buildSources(level, item.topic, ['conceptual', item.concept]),
   }
 }
 
@@ -1145,6 +1217,7 @@ function buildCalcQuestion(template: CalcTemplate, seed: number): Question {
     correctIndex: built.correctIndex,
     explanation: built.explanation,
     tags: [template.level, template.topic, ...built.tags],
+    sources: buildSources(template.level, template.topic, built.tags),
     plot: built.plot,
   }
 }

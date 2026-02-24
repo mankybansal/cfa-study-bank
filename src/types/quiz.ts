@@ -11,6 +11,11 @@ export interface Question {
   correctIndex: number
   explanation: string
   tags: string[]
+  sources: Array<{
+    title: string
+    url: string
+    note: string
+  }>
   plot?: {
     kind?: 'line' | 'scatter' | 'bar'
     title: string

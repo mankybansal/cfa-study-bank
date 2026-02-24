@@ -31,6 +31,8 @@ type StudyStore = {
   createNewSession: (input: CreateSessionInput) => void
   submitCurrentAnswer: (choiceIndex: number) => void
   moveNext: () => void
+  restartActiveSession: () => void
+  exitToMain: () => void
   resetProgress: () => void
   getActiveScore: () => SessionScore
   getTopicAccuracy: () => Array<{ topic: string; answered: number; correct: number; percent: number }>
@@ -121,6 +123,48 @@ export const useStudyStore = create<StudyStore>((set, get) => ({
         ...s,
         activeSession: null,
         completedSessions: [nextSession, ...s.completedSessions].slice(0, 30),
+      }
+      saveState({
+        version: 1,
+        activeSession: next.activeSession,
+        completedSessions: next.completedSessions,
+      })
+      return next
+    })
+  },
+  restartActiveSession: () => {
+    const state = get()
+    if (!state.activeSession) {
+      return
+    }
+
+    const resetSession: QuizSession = {
+      ...state.activeSession,
+      currentIndex: 0,
+      answers: {},
+      completed: false,
+      startedAt: new Date().toISOString(),
+      finishedAt: undefined,
+    }
+
+    set((s) => {
+      const next = {
+        ...s,
+        activeSession: resetSession,
+      }
+      saveState({
+        version: 1,
+        activeSession: next.activeSession,
+        completedSessions: next.completedSessions,
+      })
+      return next
+    })
+  },
+  exitToMain: () => {
+    set((s) => {
+      const next = {
+        ...s,
+        activeSession: null,
       }
       saveState({
         version: 1,

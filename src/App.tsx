@@ -163,6 +163,43 @@ function QuestionPlot({
   )
 }
 
+function QuestionSources({
+  sources,
+}: {
+  sources: Array<{ title: string; url: string; note: string }>
+}) {
+  if (sources.length === 0) {
+    return null
+  }
+
+  return (
+    <details className="rounded-md border bg-muted/30 p-3 text-xs" data-testid="question-sources">
+      <summary className="cursor-pointer font-medium">
+        Why this is exam-relevant (sources)
+      </summary>
+      <div className="mt-2 space-y-2">
+        {sources.map((source) => (
+          <div key={`${source.title}-${source.url}`}>
+            <a
+              className="font-medium text-primary underline-offset-2 hover:underline"
+              href={source.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {source.title}
+            </a>
+            <p className="text-muted-foreground">{source.note}</p>
+          </div>
+        ))}
+        <p className="text-muted-foreground">
+          Questions are original practice items, mapped to official curriculum scope and exam
+          structure.
+        </p>
+      </div>
+    </details>
+  )
+}
+
 function ScoreTrendChart({ points }: { points: Array<{ label: string; percent: number }> }) {
   if (points.length === 0) {
     return <p className="text-sm text-muted-foreground">Complete sessions to view trend.</p>
@@ -305,6 +342,8 @@ function App() {
     createNewSession,
     submitCurrentAnswer,
     moveNext,
+    restartActiveSession,
+    exitToMain,
     resetProgress,
     getActiveScore,
     getTopicAccuracy,
@@ -515,10 +554,29 @@ function App() {
                   Question {activeSession.currentIndex + 1} of {activeSession.questionIds.length}
                 </CardDescription>
                 <Progress value={completionPercent} aria-label="Session progress" />
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={restartActiveSession}
+                    data-testid="reset-test"
+                  >
+                    Reset Test
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={exitToMain}
+                    data-testid="back-main"
+                  >
+                    Back To Main
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <MathText className="text-sm leading-relaxed md:text-base" text={currentQuestion.stem} />
                 {currentQuestion.plot ? <QuestionPlot {...currentQuestion.plot} /> : null}
+                <QuestionSources sources={currentQuestion.sources} />
                 <div className="grid gap-2">
                   {currentQuestion.choices.map((choice, index) => {
                     const submitted = currentAnswer !== undefined
@@ -643,6 +701,7 @@ function App() {
                         <>
                           <MathText className="font-medium" text={selectedReview.question.stem} />
                           {selectedReview.question.plot ? <QuestionPlot {...selectedReview.question.plot} /> : null}
+                          <QuestionSources sources={selectedReview.question.sources} />
                           <p>
                             Your answer:{' '}
                             <span className={selectedReview.isCorrect ? 'text-emerald-600' : 'text-rose-600'}>
