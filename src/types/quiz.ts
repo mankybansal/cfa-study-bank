@@ -12,10 +12,11 @@ export interface Question {
   explanation: string
   tags: string[]
   plot?: {
+    kind?: 'line' | 'scatter' | 'bar'
     title: string
     xLabel: string
     yLabel: string
-    points: Array<{ x: number; y: number }>
+    points: Array<{ x: number; y: number; label?: string }>
   }
 }
 

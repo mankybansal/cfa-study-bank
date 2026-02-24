@@ -84,15 +84,17 @@ function MathText({ text, className }: { text: string; className?: string }) {
 }
 
 function QuestionPlot({
+  kind,
   title,
   xLabel,
   yLabel,
   points,
 }: {
+  kind?: 'line' | 'scatter' | 'bar'
   title: string
   xLabel: string
   yLabel: string
-  points: Array<{ x: number; y: number }>
+  points: Array<{ x: number; y: number; label?: string }>
 }) {
   if (points.length < 2) {
     return null
@@ -106,11 +108,13 @@ function QuestionPlot({
   const maxX = Math.max(...points.map((p) => p.x))
   const minY = Math.min(...points.map((p) => p.y))
   const maxY = Math.max(...points.map((p) => p.y))
+  const baselineValue = minY <= 0 && maxY >= 0 ? 0 : minY
 
   const toX = (x: number): number =>
     padX + ((x - minX) / Math.max(0.0001, maxX - minX)) * (width - 2 * padX)
   const toY = (y: number): number =>
     height - padY - ((y - minY) / Math.max(0.0001, maxY - minY)) * (height - 2 * padY)
+  const baselineY = toY(baselineValue)
 
   const polyline = points.map((p) => `${toX(p.x)},${toY(p.y)}`).join(' ')
 
@@ -118,12 +122,36 @@ function QuestionPlot({
     <div className="rounded-md border bg-card/60 p-2" data-testid="question-plot">
       <p className="mb-1 text-xs font-medium text-muted-foreground">{title}</p>
       <svg viewBox={`0 0 ${width} ${height}`} className="h-44 w-full">
-        <line x1={padX} y1={height - padY} x2={width - padX} y2={height - padY} stroke="currentColor" opacity="0.2" />
+        <line x1={padX} y1={baselineY} x2={width - padX} y2={baselineY} stroke="currentColor" opacity="0.2" />
         <line x1={padX} y1={padY} x2={padX} y2={height - padY} stroke="currentColor" opacity="0.2" />
-        <polyline fill="none" stroke="currentColor" strokeWidth="2.3" points={polyline} />
-        {points.map((point, i) => (
-          <circle key={`${point.x}-${point.y}-${i}`} cx={toX(point.x)} cy={toY(point.y)} r="3" fill="currentColor" />
-        ))}
+        {kind === 'bar'
+          ? points.map((point, i) => {
+              const x = toX(point.x) - 10
+              const y = Math.min(toY(point.y), baselineY)
+              const h = Math.abs(baselineY - toY(point.y))
+              return (
+                <rect
+                  key={`${point.x}-${point.y}-${i}`}
+                  x={x}
+                  y={y}
+                  width="20"
+                  height={Math.max(1, h)}
+                  fill="currentColor"
+                  opacity="0.75"
+                />
+              )
+            })
+          : null}
+        {kind !== 'bar' ? (
+          <>
+            {kind !== 'scatter' ? (
+              <polyline fill="none" stroke="currentColor" strokeWidth="2.3" points={polyline} />
+            ) : null}
+            {points.map((point, i) => (
+              <circle key={`${point.x}-${point.y}-${i}`} cx={toX(point.x)} cy={toY(point.y)} r="3" fill="currentColor" />
+            ))}
+          </>
+        ) : null}
         <text x={width / 2} y={height - 4} textAnchor="middle" className="fill-current text-[10px]">
           {xLabel}
         </text>
