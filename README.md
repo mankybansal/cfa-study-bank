@@ -14,9 +14,11 @@ React + TypeScript + Vite study app with 2,500 original CFA-style MCQs across Le
 
 - 2,500-question bank (`L1/L2/L3`) with topic metadata and explanations
 - High volume of computational MCQs (TVM, returns, statistics, CAPM, duration/convexity, forwards, hedging, information ratio)
+- Math formula rendering with KaTeX for equation-heavy questions/explanations
+- Embedded per-question plots for graph-interpretation quant items
 - Answer-review workflow: see attempted questions, selected answers, correct answers, and explanations
 - Exam blueprint panel with official structure/timing/weight bands to tune practice sessions
-- Session score trend graph and topic/difficulty performance graphs
+- Session score trend graph, topic bars, and difficulty donut plots
 - Practice session setup (levels + question count)
 - Exam-style single-answer MCQ flow
 - Immediate feedback with explanation

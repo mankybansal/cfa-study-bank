@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
+import { BlockMath, InlineMath } from 'react-katex'
 import { BarChart3, BookOpen, Clock3, LineChart, RefreshCcw, Target } from 'lucide-react'
 import { EXAM_BLUEPRINTS } from '@/data/examBlueprint'
 import { Badge } from '@/components/ui/badge'
@@ -23,6 +24,116 @@ import type { CFALevel } from '@/types/quiz'
 const LEVELS: CFALevel[] = ['L1', 'L2', 'L3']
 
 type ReviewFilter = 'all' | 'correct' | 'incorrect'
+
+type MathSegment =
+  | { type: 'text'; value: string }
+  | { type: 'inline'; value: string }
+  | { type: 'block'; value: string }
+
+function parseMath(text: string): MathSegment[] {
+  const segments: MathSegment[] = []
+  let i = 0
+  while (i < text.length) {
+    if (text.startsWith('$$', i)) {
+      const end = text.indexOf('$$', i + 2)
+      if (end !== -1) {
+        segments.push({ type: 'block', value: text.slice(i + 2, end) })
+        i = end + 2
+        continue
+      }
+    }
+    if (text[i] === '$') {
+      const end = text.indexOf('$', i + 1)
+      if (end !== -1) {
+        segments.push({ type: 'inline', value: text.slice(i + 1, end) })
+        i = end + 1
+        continue
+      }
+    }
+    const nextInline = text.indexOf('$', i)
+    const nextBlock = text.indexOf('$$', i)
+    const next = [nextInline, nextBlock].filter((x) => x >= 0).sort((a, b) => a - b)[0]
+    const end = next === undefined ? text.length : next
+    if (end === i) {
+      segments.push({ type: 'text', value: text[i] })
+      i += 1
+      continue
+    }
+    segments.push({ type: 'text', value: text.slice(i, end) })
+    i = end
+  }
+  return segments
+}
+
+function MathText({ text, className }: { text: string; className?: string }) {
+  const segments = useMemo(() => parseMath(text), [text])
+
+  return (
+    <span className={className}>
+      {segments.map((segment, index) => {
+        if (segment.type === 'inline') {
+          return <InlineMath key={`m-${index}`} math={segment.value} />
+        }
+        if (segment.type === 'block') {
+          return <BlockMath key={`m-${index}`} math={segment.value} />
+        }
+        return <Fragment key={`m-${index}`}>{segment.value}</Fragment>
+      })}
+    </span>
+  )
+}
+
+function QuestionPlot({
+  title,
+  xLabel,
+  yLabel,
+  points,
+}: {
+  title: string
+  xLabel: string
+  yLabel: string
+  points: Array<{ x: number; y: number }>
+}) {
+  if (points.length < 2) {
+    return null
+  }
+
+  const width = 420
+  const height = 180
+  const padX = 46
+  const padY = 24
+  const minX = Math.min(...points.map((p) => p.x))
+  const maxX = Math.max(...points.map((p) => p.x))
+  const minY = Math.min(...points.map((p) => p.y))
+  const maxY = Math.max(...points.map((p) => p.y))
+
+  const toX = (x: number): number =>
+    padX + ((x - minX) / Math.max(0.0001, maxX - minX)) * (width - 2 * padX)
+  const toY = (y: number): number =>
+    height - padY - ((y - minY) / Math.max(0.0001, maxY - minY)) * (height - 2 * padY)
+
+  const polyline = points.map((p) => `${toX(p.x)},${toY(p.y)}`).join(' ')
+
+  return (
+    <div className="rounded-md border bg-card/60 p-2" data-testid="question-plot">
+      <p className="mb-1 text-xs font-medium text-muted-foreground">{title}</p>
+      <svg viewBox={`0 0 ${width} ${height}`} className="h-44 w-full">
+        <line x1={padX} y1={height - padY} x2={width - padX} y2={height - padY} stroke="currentColor" opacity="0.2" />
+        <line x1={padX} y1={padY} x2={padX} y2={height - padY} stroke="currentColor" opacity="0.2" />
+        <polyline fill="none" stroke="currentColor" strokeWidth="2.3" points={polyline} />
+        {points.map((point, i) => (
+          <circle key={`${point.x}-${point.y}-${i}`} cx={toX(point.x)} cy={toY(point.y)} r="3" fill="currentColor" />
+        ))}
+        <text x={width / 2} y={height - 4} textAnchor="middle" className="fill-current text-[10px]">
+          {xLabel}
+        </text>
+        <text x={10} y={height / 2} textAnchor="middle" transform={`rotate(-90, 10, ${height / 2})`} className="fill-current text-[10px]">
+          {yLabel}
+        </text>
+      </svg>
+    </div>
+  )
+}
 
 function ScoreTrendChart({ points }: { points: Array<{ label: string; percent: number }> }) {
   if (points.length === 0) {
@@ -53,6 +164,107 @@ function ScoreTrendChart({ points }: { points: Array<{ label: string; percent: n
         return <circle key={point.label} cx={cx} cy={cy} r="3" fill="currentColor" />
       })}
     </svg>
+  )
+}
+
+function TopicBarChart({
+  rows,
+}: {
+  rows: Array<{ topic: string; answered: number; correct: number; percent: number }>
+}) {
+  if (rows.length === 0) {
+    return <p className="text-sm text-muted-foreground">No topic data yet.</p>
+  }
+
+  const top = rows.slice(0, 6)
+  const maxAnswered = Math.max(...top.map((r) => r.answered), 1)
+
+  return (
+    <div className="space-y-2 rounded-md border bg-card/60 p-3">
+      {top.map((row) => (
+        <div key={row.topic} className="space-y-1">
+          <div className="flex items-center justify-between text-xs">
+            <span className="truncate pr-2">{row.topic}</span>
+            <span className="text-muted-foreground">{row.percent}%</span>
+          </div>
+          <div className="flex gap-1">
+            <div className="h-2 rounded bg-primary" style={{ width: `${(row.answered / maxAnswered) * 100}%` }} />
+            <div className="h-2 rounded bg-emerald-500" style={{ width: `${row.percent}%` }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function DifficultyDonut({ rows }: { rows: Array<{ difficulty: string; answered: number }> }) {
+  const total = rows.reduce((sum, r) => sum + r.answered, 0)
+  if (total === 0) {
+    return <p className="text-sm text-muted-foreground">No difficulty split yet.</p>
+  }
+
+  const colors: Record<string, string> = {
+    easy: '#3b82f6',
+    medium: '#f59e0b',
+    hard: '#ef4444',
+  }
+
+  const slices = rows.reduce<Array<{ difficulty: string; answered: number; start: number; sweep: number; color: string }>>(
+    (acc, row) => {
+      const last = acc[acc.length - 1]
+      const start = last ? last.start + last.sweep : -90
+      const sweep = (row.answered / total) * 360
+      acc.push({
+        ...row,
+        start,
+        sweep,
+        color: colors[row.difficulty] ?? '#888',
+      })
+      return acc
+    },
+    [],
+  )
+
+  const radius = 56
+  const cx = 80
+  const cy = 80
+
+  const pathForArc = (startDeg: number, sweepDeg: number): string => {
+    const endDeg = startDeg + sweepDeg
+    const startRad = (startDeg * Math.PI) / 180
+    const endRad = (endDeg * Math.PI) / 180
+    const x1 = cx + radius * Math.cos(startRad)
+    const y1 = cy + radius * Math.sin(startRad)
+    const x2 = cx + radius * Math.cos(endRad)
+    const y2 = cy + radius * Math.sin(endRad)
+    const largeArc = sweepDeg > 180 ? 1 : 0
+    return `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`
+  }
+
+  return (
+    <div className="rounded-md border bg-card/60 p-3">
+      <svg viewBox="0 0 160 160" className="mx-auto h-36 w-36">
+        <circle cx={cx} cy={cy} r={radius} fill="none" stroke="currentColor" strokeOpacity="0.12" strokeWidth="16" />
+        {slices.map((slice) => (
+          <path
+            key={slice.difficulty}
+            d={pathForArc(slice.start, slice.sweep)}
+            fill="none"
+            stroke={slice.color}
+            strokeWidth="16"
+            strokeLinecap="round"
+          />
+        ))}
+      </svg>
+      <div className="mt-2 grid grid-cols-3 gap-1 text-center text-xs">
+        {rows.map((row) => (
+          <div key={row.difficulty}>
+            <p className="capitalize">{row.difficulty}</p>
+            <p className="text-muted-foreground">{row.answered}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
@@ -99,12 +311,8 @@ function App() {
 
   const reviewRows = useMemo(() => {
     return answeredHistory.filter((row) => {
-      if (reviewFilter === 'all') {
-        return true
-      }
-      if (reviewFilter === 'correct') {
-        return row.isCorrect
-      }
+      if (reviewFilter === 'all') return true
+      if (reviewFilter === 'correct') return row.isCorrect
       return !row.isCorrect
     })
   }, [answeredHistory, reviewFilter])
@@ -115,9 +323,7 @@ function App() {
 
   const toggleLevel = (level: CFALevel): void => {
     setSelectedLevels((current) => {
-      if (current.includes(level)) {
-        return current.filter((item) => item !== level)
-      }
+      if (current.includes(level)) return current.filter((item) => item !== level)
       return [...current, level]
     })
   }
@@ -283,7 +489,8 @@ function App() {
                 <Progress value={completionPercent} aria-label="Session progress" />
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-sm leading-relaxed md:text-base">{currentQuestion.stem}</p>
+                <MathText className="text-sm leading-relaxed md:text-base" text={currentQuestion.stem} />
+                {currentQuestion.plot ? <QuestionPlot {...currentQuestion.plot} /> : null}
                 <div className="grid gap-2">
                   {currentQuestion.choices.map((choice, index) => {
                     const submitted = currentAnswer !== undefined
@@ -306,7 +513,7 @@ function App() {
                         onClick={() => submitCurrentAnswer(index)}
                       >
                         <span className="font-medium">{String.fromCharCode(65 + index)}.</span>{' '}
-                        {choice}
+                        <MathText text={choice} />
                       </button>
                     )
                   })}
@@ -317,7 +524,7 @@ function App() {
                     <p className="mb-1 font-medium">
                       {currentAnswer.isCorrect ? 'Correct' : 'Incorrect'} answer
                     </p>
-                    <p className="text-muted-foreground">{currentQuestion.explanation}</p>
+                    <MathText className="text-muted-foreground" text={currentQuestion.explanation} />
                     <Button className="mt-3" onClick={() => moveNext()} data-testid="next-question">
                       Next Question
                     </Button>
@@ -406,7 +613,8 @@ function App() {
                     <CardContent className="space-y-2 text-sm">
                       {selectedReview ? (
                         <>
-                          <p className="font-medium">{selectedReview.question.stem}</p>
+                          <MathText className="font-medium" text={selectedReview.question.stem} />
+                          {selectedReview.question.plot ? <QuestionPlot {...selectedReview.question.plot} /> : null}
                           <p>
                             Your answer:{' '}
                             <span className={selectedReview.isCorrect ? 'text-emerald-600' : 'text-rose-600'}>
@@ -419,7 +627,7 @@ function App() {
                             {selectedReview.question.choices[selectedReview.question.correctIndex]}
                           </p>
                           <Separator />
-                          <p className="text-muted-foreground">{selectedReview.question.explanation}</p>
+                          <MathText className="text-muted-foreground" text={selectedReview.question.explanation} />
                         </>
                       ) : (
                         <p className="text-muted-foreground">
@@ -471,61 +679,42 @@ function App() {
             </Card>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <LineChart className="h-4 w-4" /> Score Trend (Recent Sessions)
-              </CardTitle>
-              <CardDescription>Graph of your completed session percentages.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ScoreTrendChart points={sessionTrend.map((s) => ({ label: s.label, percent: s.percent }))} />
-              {sessionTrend.length > 0 ? (
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Latest: {sessionTrend[sessionTrend.length - 1].percent}%
-                </p>
-              ) : null}
-            </CardContent>
-          </Card>
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <LineChart className="h-4 w-4" /> Score Trend (Recent Sessions)
+                </CardTitle>
+                <CardDescription>Line plot of completed session percentages.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ScoreTrendChart points={sessionTrend.map((s) => ({ label: s.label, percent: s.percent }))} />
+                {sessionTrend.length > 0 ? (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Latest: {sessionTrend[sessionTrend.length - 1].percent}%
+                  </p>
+                ) : null}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Difficulty Split (Donut)</CardTitle>
+                <CardDescription>Distribution of answered easy/medium/hard questions.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <DifficultyDonut rows={answeredDifficulties} />
+              </CardContent>
+            </Card>
+          </div>
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Topic accuracy snapshot</CardTitle>
-              <CardDescription>Based on your local attempt history.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {topicAccuracy.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No answered questions yet.</p>
-              ) : (
-                topicAccuracy.map((row) => (
-                  <div key={row.topic} className="space-y-1">
-                    <div className="flex items-center justify-between text-sm">
-                      <span>{row.topic}</span>
-                      <span className="text-muted-foreground">
-                        {row.correct}/{row.answered} ({row.percent}%)
-                      </span>
-                    </div>
-                    <Progress value={row.percent} />
-                  </div>
-                ))
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Difficulty coverage</CardTitle>
+              <CardTitle className="text-base">Topic Accuracy Bars</CardTitle>
+              <CardDescription>Horizontal bars combining volume and hit-rate.</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-2 md:grid-cols-3">
-                {answeredDifficulties.map((row) => (
-                  <div key={row.difficulty} className="rounded-md border p-3 text-sm">
-                    <p className="font-medium capitalize">{row.difficulty}</p>
-                    <Separator className="my-2" />
-                    <p>{row.answered} answered</p>
-                  </div>
-                ))}
-              </div>
+              <TopicBarChart rows={topicAccuracy} />
             </CardContent>
           </Card>
         </TabsContent>

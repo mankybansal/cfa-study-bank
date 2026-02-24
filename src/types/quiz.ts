@@ -11,6 +11,12 @@ export interface Question {
   correctIndex: number
   explanation: string
   tags: string[]
+  plot?: {
+    title: string
+    xLabel: string
+    yLabel: string
+    points: Array<{ x: number; y: number }>
+  }
 }
 
 export interface SessionAnswer {
