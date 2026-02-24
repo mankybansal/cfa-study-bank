@@ -7,106 +7,71 @@ type TopicConcept = {
   wrong: [string, string, string]
 }
 
+type CalcTemplate = {
+  key: string
+  level: CFALevel
+  topic: string
+  difficulty: Difficulty
+  build: (seed: number) => {
+    stem: string
+    choices: [string, string, string, string]
+    correctIndex: number
+    explanation: string
+    tags: string[]
+  }
+}
+
 const LEVEL_TOPIC_CONCEPTS: Record<CFALevel, TopicConcept[]> = {
   L1: [
     {
       topic: 'Ethical and Professional Standards',
       concept: 'duty to clients',
-      correct: 'Client interests must be placed ahead of the member or employer interests.',
+      correct: 'Client interests must be placed ahead of member and employer interests.',
       wrong: [
-        'Client interests are equal to member interests if disclosed.',
-        'Employer interests always override fiduciary obligations.',
-        'Suitability is optional for institutional accounts.',
-      ],
-    },
-    {
-      topic: 'Quantitative Methods',
-      concept: 'time value of money',
-      correct: 'A higher discount rate lowers the present value of future cash flows.',
-      wrong: [
-        'A higher discount rate raises present value for all cash flows.',
-        'Present value is independent of discount rate selection.',
-        'Discounting applies only to perpetual cash flow streams.',
+        'Client interests may be subordinated when disclosed in writing.',
+        'Employer interests always override fiduciary duty to clients.',
+        'Suitability is optional for long-horizon client mandates.',
       ],
     },
     {
       topic: 'Economics',
-      concept: 'price elasticity',
-      correct: 'Demand is elastic when a small price change causes a larger proportional quantity change.',
+      concept: 'price elasticity of demand',
+      correct:
+        'Demand is elastic when quantity demanded changes by a greater percentage than price.',
       wrong: [
-        'Demand is elastic whenever quantity does not change with price.',
-        'Elastic demand implies higher prices always increase total revenue.',
-        'Elasticity is measured only for luxury goods.',
+        'Elastic demand implies no change in quantity when price changes.',
+        'Elasticity is relevant only for luxury goods.',
+        'Elastic demand guarantees higher revenue after price increases.',
       ],
     },
     {
       topic: 'Financial Statement Analysis',
-      concept: 'inventory accounting',
-      correct: 'Under rising prices, FIFO generally reports lower cost of goods sold than LIFO.',
+      concept: 'inventory accounting under inflation',
+      correct: 'Under rising prices, FIFO typically reports lower cost of goods sold than LIFO.',
       wrong: [
         'Under rising prices, FIFO always reports higher cost of goods sold than LIFO.',
-        'Inventory methods have no effect on gross profit.',
-        'LIFO is required by IFRS for all issuers.',
-      ],
-    },
-    {
-      topic: 'Corporate Issuers',
-      concept: 'capital budgeting',
-      correct: 'A project with a positive NPV increases shareholder value if assumptions hold.',
-      wrong: [
-        'Any project with the highest IRR always has the highest NPV.',
-        'Payback period includes all project cash flows after cutoff.',
-        'Capital budgeting should ignore cost of capital differences.',
+        'Inventory method choice never affects gross margin.',
+        'IFRS requires LIFO for inflationary environments.',
       ],
     },
     {
       topic: 'Equity Investments',
-      concept: 'valuation multiples',
-      correct: 'A P/E multiple is interpreted relative to growth, risk, and accounting quality.',
+      concept: 'valuation multiples interpretation',
+      correct: 'A P/E ratio must be assessed alongside growth expectations, risk, and accounting quality.',
       wrong: [
-        'A low P/E always means the stock is undervalued.',
-        'Valuation multiples remove all effects of leverage.',
-        'Multiples are not comparable within the same industry.',
-      ],
-    },
-    {
-      topic: 'Fixed Income',
-      concept: 'duration',
-      correct: 'For small yield moves, higher duration implies greater price sensitivity.',
-      wrong: [
-        'Duration measures credit spread only and not rate sensitivity.',
-        'Higher duration means lower sensitivity to interest-rate changes.',
-        'Duration is unaffected by coupon level.',
-      ],
-    },
-    {
-      topic: 'Derivatives',
-      concept: 'futures pricing',
-      correct: 'The no-arbitrage futures price reflects spot price plus carrying costs minus benefits.',
-      wrong: [
-        'Futures prices are always equal to expected future spot prices.',
-        'Carrying costs are ignored in no-arbitrage pricing.',
-        'Convenience yield increases fair futures price one-for-one.',
+        'A low P/E always indicates undervaluation.',
+        'Multiples automatically control for all leverage differences.',
+        'Comparable multiples should avoid peer groups in the same industry.',
       ],
     },
     {
       topic: 'Alternative Investments',
-      concept: 'real estate valuation',
-      correct: 'Income capitalization estimates value by dividing stabilized NOI by a market cap rate.',
+      concept: 'real estate cap rate intuition',
+      correct: 'For a given NOI, a higher cap rate implies a lower property valuation.',
       wrong: [
-        'Real estate value is best measured only by historical cost.',
-        'Cap rates increase property values for a fixed NOI.',
-        'NOI includes financing costs and principal repayment.',
-      ],
-    },
-    {
-      topic: 'Portfolio Management',
-      concept: 'diversification',
-      correct: 'Diversification reduces unsystematic risk but not market-wide systematic risk.',
-      wrong: [
-        'Diversification eliminates all portfolio risk.',
-        'Diversification increases unsystematic risk by definition.',
-        'Systematic risk is removed by holding more stocks in one sector.',
+        'For a given NOI, a higher cap rate implies a higher property valuation.',
+        'Cap rates have no relation to expected return.',
+        'NOI includes principal repayment and interest expense.',
       ],
     },
   ],
@@ -114,227 +79,335 @@ const LEVEL_TOPIC_CONCEPTS: Record<CFALevel, TopicConcept[]> = {
     {
       topic: 'Ethical and Professional Standards',
       concept: 'mosaic theory',
-      correct: 'Investment conclusions may combine nonmaterial nonpublic data with public information.',
+      correct: 'Mosaic theory permits conclusions from immaterial nonpublic and public information.',
       wrong: [
-        'Any use of nonpublic information automatically violates the standards.',
-        'Mosaic theory permits use of material nonpublic information if documented.',
-        'Only public data may be used in all research reports.',
-      ],
-    },
-    {
-      topic: 'Quantitative Methods',
-      concept: 'regression diagnostics',
-      correct: 'Serial correlation in residuals can bias standard errors and test statistics.',
-      wrong: [
-        'Serial correlation improves reliability of t-statistics.',
-        'Autocorrelation affects only dependent-variable scaling.',
-        'Regression diagnostics are unnecessary in time-series models.',
-      ],
-    },
-    {
-      topic: 'Economics',
-      concept: 'currency translation',
-      correct: 'A stronger domestic currency tends to reduce translated foreign revenues.',
-      wrong: [
-        'Domestic currency strength always increases translated exports.',
-        'Translation effects are unrelated to reporting currency.',
-        'FX changes affect only balance sheet items and never income.',
+        'Any nonpublic information use violates standards regardless of materiality.',
+        'Material nonpublic information is acceptable if cited in a report.',
+        'Research may only use public disclosures and no other data.',
       ],
     },
     {
       topic: 'Financial Statement Analysis',
-      concept: 'intercorporate investments',
-      correct: 'Under the equity method, investor income includes its share of investee earnings.',
+      concept: 'equity method accounting',
+      correct: 'Under the equity method, the investor recognizes its share of investee earnings.',
       wrong: [
-        'Under the equity method, dividends are the only source of income recognition.',
-        'The equity method requires full consolidation of all liabilities.',
-        'Ownership percentage never influences accounting treatment.',
-      ],
-    },
-    {
-      topic: 'Corporate Issuers',
-      concept: 'capital structure',
-      correct: 'Higher leverage can increase equity return volatility through financial risk.',
-      wrong: [
-        'Leverage always lowers equity risk and return dispersion.',
-        'Capital structure does not affect cost of equity.',
-        'Debt financing removes default risk from the firm.',
+        'Under the equity method, dividends are recorded as revenue only.',
+        'Equity method requires full consolidation of investee liabilities.',
+        'Ownership percentage does not affect accounting treatment.',
       ],
     },
     {
       topic: 'Equity Investments',
-      concept: 'residual income valuation',
-      correct: 'Residual income equals net income minus an equity charge based on required return.',
+      concept: 'residual income model',
+      correct: 'Residual income equals net income minus the equity charge on beginning book value.',
       wrong: [
-        'Residual income is identical to free cash flow to equity.',
-        'Residual income ignores book value in all models.',
-        'Residual income requires dividend payout to be constant.',
+        'Residual income equals free cash flow to equity by definition.',
+        'Residual income models ignore required return assumptions.',
+        'Residual income valuation cannot be used when dividends are low.',
       ],
     },
     {
       topic: 'Fixed Income',
-      concept: 'term structure models',
-      correct: 'A steeper yield curve can indicate higher expected future short rates or term premia.',
+      concept: 'term structure interpretation',
+      correct: 'A steep yield curve can reflect expected higher short rates and/or term premia.',
       wrong: [
-        'Yield curves are always flat in efficient bond markets.',
-        'Term structure is driven only by current inflation.',
-        'Steep curves imply lower future short rates by definition.',
-      ],
-    },
-    {
-      topic: 'Derivatives',
-      concept: 'option greeks',
-      correct: 'Delta approximates the change in option value for a small change in underlying price.',
-      wrong: [
-        'Delta measures only the passage of time.',
-        'Gamma is the first derivative of option value to spot price.',
-        'Vega measures sensitivity to interest rates only.',
-      ],
-    },
-    {
-      topic: 'Alternative Investments',
-      concept: 'private equity stages',
-      correct: 'Buyout strategies typically use leverage to acquire more mature companies.',
-      wrong: [
-        'Venture capital buyouts target only distressed debt securities.',
-        'Buyouts avoid operational improvements after acquisition.',
-        'Private equity returns are fully observable daily in public markets.',
+        'A steep curve always indicates near-term recession with falling short rates.',
+        'Yield curves only embed current inflation and nothing else.',
+        'Term structure has no link to expected future policy rates.',
       ],
     },
     {
       topic: 'Portfolio Management',
-      concept: 'active risk budgeting',
-      correct: 'Information ratio evaluates active return per unit of active risk.',
+      concept: 'tracking error and active risk',
+      correct: 'Tracking error measures volatility of active returns versus a benchmark.',
       wrong: [
-        'Information ratio uses total portfolio variance in the denominator.',
-        'Tracking error measures market beta rather than active dispersion.',
-        'Active risk budgeting ignores benchmark selection.',
+        'Tracking error measures only absolute portfolio volatility.',
+        'Tracking error is identical to market beta.',
+        'Tracking error applies only to passive index funds.',
       ],
     },
   ],
   L3: [
     {
       topic: 'Ethical and Professional Standards',
-      concept: 'soft dollar standards',
-      correct: 'Soft dollar arrangements must primarily benefit clients through research or execution services.',
+      concept: 'soft-dollar arrangements',
+      correct:
+        'Soft-dollar benefits should primarily support research or execution that benefits clients.',
       wrong: [
-        'Soft dollars may fund any firm expense if disclosed annually.',
-        'Soft dollars are prohibited even for client-directed brokerage.',
-        'Research obtained with soft dollars may never influence portfolio decisions.',
-      ],
-    },
-    {
-      topic: 'Behavioral Finance',
-      concept: 'loss aversion',
-      correct: 'Loss-averse investors may hold losing positions too long to avoid realizing losses.',
-      wrong: [
-        'Loss aversion causes investors to prefer immediate loss recognition.',
-        'Loss aversion is irrelevant once portfolio optimization is done.',
-        'Loss aversion affects only institutional and not individual investors.',
-      ],
-    },
-    {
-      topic: 'Capital Market Expectations',
-      concept: 'scenario analysis',
-      correct: 'Scenario analysis evaluates portfolio outcomes under coherent multi-factor assumptions.',
-      wrong: [
-        'Scenario analysis replaces base-case forecasting and probability weighting.',
-        'Scenarios should vary one variable while holding all macro inputs fixed.',
-        'Scenario analysis is useful only for equity portfolios.',
+        'Soft dollars can fund any overhead if annually disclosed.',
+        'Soft-dollar research cannot be used in investment decisions.',
+        'Soft-dollar arrangements are prohibited even for eligible research services.',
       ],
     },
     {
       topic: 'Asset Allocation',
       concept: 'strategic versus tactical allocation',
-      correct: 'Strategic allocation sets long-term policy weights aligned with objectives and constraints.',
+      correct:
+        'Strategic allocation sets policy weights based on objectives, constraints, and liabilities.',
       wrong: [
-        'Tactical allocation determines permanent policy portfolio weights.',
-        'Strategic allocation should ignore liability characteristics.',
-        'Strategic allocation is updated daily with short-term signals.',
+        'Strategic allocation is replaced each month by tactical views.',
+        'Strategic allocation ignores liability and spending needs.',
+        'Tactical allocation defines permanent benchmark policy weights.',
       ],
     },
     {
-      topic: 'Fixed Income Portfolio Management',
+      topic: 'Performance Measurement',
+      concept: 'attribution interpretation',
+      correct: 'Attribution decomposes active return into allocation, selection, and interaction effects.',
+      wrong: [
+        'Attribution reports absolute return only, not benchmark-relative effects.',
+        'Attribution is not applicable to multi-asset portfolios.',
+        'Attribution assumes manager skill cannot affect outcomes.',
+      ],
+    },
+    {
+      topic: 'Derivatives and Risk Management',
+      concept: 'currency hedge trade-offs',
+      correct:
+        'Strategic hedge ratios balance risk reduction benefits with carry and opportunity costs.',
+      wrong: [
+        'Full hedging always maximizes expected return in every mandate.',
+        'Hedge ratios are independent of investment horizon and liabilities.',
+        'Currency overlays cannot be implemented with forwards.',
+      ],
+    },
+    {
+      topic: 'Portfolio Construction',
       concept: 'liability-driven investing',
-      correct: 'LDI emphasizes matching asset cash flow and duration characteristics to liabilities.',
+      correct: 'LDI aims to align asset cash-flow and duration traits with liability characteristics.',
       wrong: [
-        'LDI seeks maximum yield with no regard to liability timing.',
-        'LDI assumes liabilities are not sensitive to interest rates.',
-        'LDI is relevant only for short-only equity mandates.',
-      ],
-    },
-    {
-      topic: 'Equity Portfolio Management',
-      concept: 'portable alpha',
-      correct: 'Portable alpha separates beta exposure from alpha generation using overlays.',
-      wrong: [
-        'Portable alpha eliminates the need for benchmark definition.',
-        'Portable alpha combines only cash equities and no derivatives.',
-        'Portable alpha guarantees positive active return each period.',
-      ],
-    },
-    {
-      topic: 'Derivatives and Currency Management',
-      concept: 'currency hedging',
-      correct: 'A strategic hedge ratio balances risk reduction against potential carry and opportunity costs.',
-      wrong: [
-        'Full hedging always maximizes return regardless of mandate.',
-        'Hedging decisions are independent of investment horizon.',
-        'Currency overlay cannot be implemented with forwards.',
-      ],
-    },
-    {
-      topic: 'Alternative Investments',
-      concept: 'liquidity risk in alternatives',
-      correct: 'Less liquid alternatives can require a return premium and longer lockup tolerance.',
-      wrong: [
-        'Liquidity risk disappears when valuation frequency is quarterly.',
-        'Illiquidity always lowers required return.',
-        'Liquidity constraints are irrelevant for endowment portfolios.',
-      ],
-    },
-    {
-      topic: 'Risk Management',
-      concept: 'stress testing',
-      correct: 'Stress testing evaluates tail outcomes beyond normal-distribution assumptions.',
-      wrong: [
-        'Stress testing is unnecessary when historical volatility is low.',
-        'Stress testing should rely only on the single worst historical day.',
-        'Stress tests replace all scenario and sensitivity analysis methods.',
-      ],
-    },
-    {
-      topic: 'Performance Evaluation',
-      concept: 'attribution analysis',
-      correct: 'Attribution separates active return into allocation, selection, and interaction effects.',
-      wrong: [
-        'Attribution reports only absolute return and not benchmark-relative effects.',
-        'Attribution cannot be performed for multi-asset portfolios.',
-        'Attribution assumes managers cannot add value through positioning.',
+        'LDI seeks highest nominal yield regardless of liability profile.',
+        'LDI assumes liabilities are insensitive to interest-rate changes.',
+        'LDI is relevant only for high-turnover equity mandates.',
       ],
     },
   ],
 }
 
-const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'hard']
-
-const CONTEXTS = [
-  'in a portfolio manager review meeting',
-  'in an analyst training session',
-  'for exam-style case interpretation',
-  'while comparing two candidate answers',
-  'under a realistic market stress scenario',
-  'when evaluating a client suitability memo',
-  'during a post-trade investment committee review',
-  'for a mock exam vignette follow-up',
-  'when validating assumptions in a forecast model',
-  'while diagnosing a risk report inconsistency',
+const STEM_TEMPLATES = [
+  'A candidate is evaluating {concept}. Which statement is most accurate?',
+  'In a vignette focused on {topic}, which statement best describes {concept}?',
+  'An analyst is reviewing {concept}. Which conclusion is most appropriate?',
 ]
 
-const STEM_TEMPLATES = [
-  'A candidate is evaluating {concept} {context}. Which statement is most accurate?',
-  'For {topic}, which statement best describes {concept} {context}?',
-  'An analyst applies {concept} {context}. Which conclusion is most appropriate?',
+function numeric(seed: number, min: number, max: number): number {
+  const val = ((seed * 9301 + 49297) % 233280) / 233280
+  return min + (max - min) * val
+}
+
+function numericInt(seed: number, min: number, max: number): number {
+  return Math.floor(numeric(seed, min, max + 1))
+}
+
+function round(value: number, digits = 2): number {
+  const factor = 10 ** digits
+  return Math.round(value * factor) / factor
+}
+
+function orderedChoices(correct: number, deltas: [number, number, number], suffix = ''): {
+  choices: [string, string, string, string]
+  correctIndex: number
+} {
+  const values = [correct, correct + deltas[0], correct + deltas[1], correct + deltas[2]]
+  const decorated = values.map((v) => `${round(v, 2).toFixed(2)}${suffix}`)
+  const sorted = [...decorated].sort((a, b) => Number(a.replace('%', '')) - Number(b.replace('%', '')))
+  const correctChoice = `${round(correct, 2).toFixed(2)}${suffix}`
+  return {
+    choices: sorted as [string, string, string, string],
+    correctIndex: sorted.indexOf(correctChoice),
+  }
+}
+
+const CALC_TEMPLATES: CalcTemplate[] = [
+  {
+    key: 'hpr',
+    level: 'L1',
+    topic: 'Quantitative Methods',
+    difficulty: 'easy',
+    build: (seed) => {
+      const buy = numericInt(seed, 20, 80)
+      const sell = buy + numericInt(seed + 1, -12, 14)
+      const dividend = numericInt(seed + 2, 0, 4)
+      const shares = numericInt(seed + 3, 50, 200)
+      const hpr = ((sell * shares - buy * shares + dividend * shares) / (buy * shares)) * 100
+      const { choices, correctIndex } = orderedChoices(hpr, [2.5, -2.1, 4.2], '%')
+      return {
+        stem: `An investor buys ${shares} shares at $${buy.toFixed(2)}, sells at $${sell.toFixed(2)}, and receives a dividend of $${dividend.toFixed(2)} per share. The holding period return is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `HPR = (ending value - beginning value + income) / beginning value = ${round(hpr, 2).toFixed(2)}%.`,
+        tags: ['returns', 'hpr', 'calculation'],
+      }
+    },
+  },
+  {
+    key: 'pv',
+    level: 'L1',
+    topic: 'Quantitative Methods',
+    difficulty: 'medium',
+    build: (seed) => {
+      const fv = numericInt(seed, 5_000, 20_000)
+      const r = numericInt(seed + 1, 4, 12) / 100
+      const n = numericInt(seed + 2, 2, 8)
+      const pv = fv / (1 + r) ** n
+      const { choices, correctIndex } = orderedChoices(pv, [350, -280, 620])
+      return {
+        stem: `A cash flow of $${fv.toFixed(2)} is expected in ${n} years. Using an annual discount rate of ${(r * 100).toFixed(1)}%, the present value is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `PV = FV / (1 + r)^n = ${fv.toFixed(2)} / (1 + ${(r * 100).toFixed(1)}%)^${n} = $${round(pv, 2).toFixed(2)}.`,
+        tags: ['time-value', 'discounting', 'calculation'],
+      }
+    },
+  },
+  {
+    key: 'mean-std',
+    level: 'L1',
+    topic: 'Quantitative Methods',
+    difficulty: 'medium',
+    build: (seed) => {
+      const x1 = numericInt(seed, -4, 6)
+      const x2 = numericInt(seed + 1, -2, 8)
+      const x3 = numericInt(seed + 2, 0, 10)
+      const x4 = numericInt(seed + 3, 1, 12)
+      const values = [x1, x2, x3, x4]
+      const mean = values.reduce((s, x) => s + x, 0) / values.length
+      const variance =
+        values.reduce((s, x) => s + (x - mean) ** 2, 0) / (values.length - 1)
+      const sd = Math.sqrt(variance)
+      const { choices, correctIndex } = orderedChoices(sd, [0.55, -0.48, 0.92])
+      return {
+        stem: `Given returns of ${values.map((x) => `${x}%`).join(', ')}, the sample standard deviation is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Sample variance uses n-1 in the denominator; sample standard deviation is sqrt(variance) = ${round(sd, 2).toFixed(2)}%.`,
+        tags: ['statistics', 'standard-deviation', 'calculation'],
+      }
+    },
+  },
+  {
+    key: 'correlation',
+    level: 'L2',
+    topic: 'Quantitative Methods',
+    difficulty: 'medium',
+    build: (seed) => {
+      const sdA = numericInt(seed, 8, 24) / 100
+      const sdB = numericInt(seed + 1, 10, 28) / 100
+      const rho = numericInt(seed + 2, -4, 8) / 10
+      const cov = sdA * sdB * rho
+      const { choices, correctIndex } = orderedChoices(rho, [0.2, -0.25, 0.35])
+      return {
+        stem: `Asset A has standard deviation ${(sdA * 100).toFixed(1)}%, Asset B has standard deviation ${(sdB * 100).toFixed(1)}%, and covariance ${round(cov, 4).toFixed(4)}. The correlation is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Correlation = covariance / (sigma_A * sigma_B) = ${round(rho, 2).toFixed(2)}.`,
+        tags: ['statistics', 'correlation', 'calculation'],
+      }
+    },
+  },
+  {
+    key: 'capm',
+    level: 'L2',
+    topic: 'Portfolio Management',
+    difficulty: 'easy',
+    build: (seed) => {
+      const rf = numericInt(seed, 2, 5) / 100
+      const rm = numericInt(seed + 1, 7, 13) / 100
+      const beta = numericInt(seed + 2, 60, 160) / 100
+      const req = (rf + beta * (rm - rf)) * 100
+      const { choices, correctIndex } = orderedChoices(req, [1.2, -1.1, 2.4], '%')
+      return {
+        stem: `Using CAPM with risk-free rate ${(rf * 100).toFixed(1)}%, expected market return ${(rm * 100).toFixed(1)}%, and beta ${beta.toFixed(2)}, the required return is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `Required return = Rf + beta(Rm - Rf) = ${round(req, 2).toFixed(2)}%.`,
+        tags: ['capm', 'required-return', 'calculation'],
+      }
+    },
+  },
+  {
+    key: 'duration-convexity',
+    level: 'L2',
+    topic: 'Fixed Income',
+    difficulty: 'hard',
+    build: (seed) => {
+      const md = numericInt(seed, 3, 9)
+      const convexity = numericInt(seed + 1, 20, 90)
+      const y = numericInt(seed + 2, 25, 75) / 10000
+      const pct = (-md * y + 0.5 * convexity * y * y) * 100
+      const { choices, correctIndex } = orderedChoices(pct, [0.35, -0.4, 0.6], '%')
+      return {
+        stem: `A bond has modified duration ${md.toFixed(2)} and convexity ${convexity.toFixed(2)}. If yield rises by ${(y * 10000).toFixed(0)} bps, the estimated percentage price change is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `DeltaP/P ≈ -Duration*DeltaY + 0.5*Convexity*(DeltaY)^2 = ${round(pct, 2).toFixed(2)}%.`,
+        tags: ['fixed-income', 'duration', 'convexity', 'calculation'],
+      }
+    },
+  },
+  {
+    key: 'forward-price',
+    level: 'L2',
+    topic: 'Derivatives',
+    difficulty: 'medium',
+    build: (seed) => {
+      const spot = numericInt(seed, 70, 180)
+      const r = numericInt(seed + 1, 2, 8) / 100
+      const q = numericInt(seed + 2, 0, 4) / 100
+      const t = numericInt(seed + 3, 6, 18) / 12
+      const fwd = spot * (1 + (r - q) * t)
+      const { choices, correctIndex } = orderedChoices(fwd, [2.4, -1.8, 4.1])
+      return {
+        stem: `A stock index is at ${spot.toFixed(2)}. The annual financing rate is ${(r * 100).toFixed(1)}%, dividend yield ${(q * 100).toFixed(1)}%, and time to maturity ${t.toFixed(2)} years. The no-arbitrage forward price is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `F0 ≈ S0 * [1 + (r - q) * T] = ${round(fwd, 2).toFixed(2)}.`,
+        tags: ['forwards', 'cost-of-carry', 'calculation'],
+      }
+    },
+  },
+  {
+    key: 'information-ratio',
+    level: 'L3',
+    topic: 'Performance Measurement',
+    difficulty: 'easy',
+    build: (seed) => {
+      const active = numericInt(seed, -1, 6) / 100
+      const te = numericInt(seed + 1, 2, 9) / 100
+      const ir = active / te
+      const { choices, correctIndex } = orderedChoices(ir, [0.16, -0.14, 0.27])
+      return {
+        stem: `A manager has annual active return ${(active * 100).toFixed(1)}% and tracking error ${(te * 100).toFixed(1)}%. The information ratio is closest to:`,
+        choices,
+        correctIndex,
+        explanation: `IR = active return / tracking error = ${round(ir, 2).toFixed(2)}.`,
+        tags: ['performance', 'information-ratio', 'calculation'],
+      }
+    },
+  },
+  {
+    key: 'hedge-ratio',
+    level: 'L3',
+    topic: 'Derivatives and Risk Management',
+    difficulty: 'hard',
+    build: (seed) => {
+      const betaP = numericInt(seed, 70, 130) / 100
+      const valueP = numericInt(seed + 1, 20, 80) * 1_000_000
+      const futurePrice = numericInt(seed + 2, 3000, 6000)
+      const multiplier = 50
+      const betaF = 1
+      const contracts = (betaP * valueP) / (futurePrice * multiplier * betaF)
+      const rounded = Math.round(contracts)
+      const choices = [rounded - 20, rounded - 10, rounded, rounded + 15]
+      return {
+        stem: `A portfolio with beta ${betaP.toFixed(2)} and value $${valueP.toLocaleString()} is hedged using an equity index futures contract priced at ${futurePrice} with multiplier ${multiplier}. Ignoring basis risk, the number of contracts to short is closest to:`,
+        choices: choices.map((x) => `${x}`) as [string, string, string, string],
+        correctIndex: 2,
+        explanation: `Contracts ≈ (beta_P * value_P) / (futures price * multiplier * beta_F) = ${round(contracts, 2)} ≈ ${rounded}.`,
+        tags: ['hedging', 'futures', 'calculation'],
+      }
+    },
+  },
 ]
 
 function slugify(input: string): string {
@@ -344,73 +417,73 @@ function slugify(input: string): string {
     .replace(/(^-|-$)/g, '')
 }
 
-function seededIndex(seed: string, mod: number): number {
-  let value = 0
-  for (let i = 0; i < seed.length; i += 1) {
-    value = (value * 31 + seed.charCodeAt(i)) % 2_147_483_647
-  }
-  return value % mod
-}
-
-function buildChoices(correct: string, wrong: [string, string, string], seed: string): {
-  choices: [string, string, string, string]
-  correctIndex: number
-} {
-  const all = [correct, ...wrong]
-  const target = seededIndex(seed, 4)
-  if (target !== 0) {
-    const temp = all[target]
-    all[target] = all[0]
-    all[0] = temp
-  }
-  return {
-    choices: all as [string, string, string, string],
-    correctIndex: target,
-  }
-}
-
-function buildStem(topic: string, concept: string, variant: number): string {
+function buildConceptStem(topic: string, concept: string, variant: number): string {
   const template = STEM_TEMPLATES[variant % STEM_TEMPLATES.length]
-  const context = CONTEXTS[variant % CONTEXTS.length]
-  return template
-    .replace('{topic}', topic)
-    .replace('{concept}', concept)
-    .replace('{context}', context)
+  return template.replace('{topic}', topic).replace('{concept}', concept)
+}
+
+function buildConceptQuestion(level: CFALevel, item: TopicConcept, variant: number): Question {
+  const all = [item.correct, ...item.wrong]
+  const idx = variant % 4
+  ;[all[0], all[idx]] = [all[idx], all[0]]
+
+  return {
+    id: `concept-${level}-${slugify(item.topic)}-${slugify(item.concept)}-${variant}`,
+    level,
+    topic: item.topic,
+    difficulty: (['easy', 'medium', 'hard'] as Difficulty[])[variant % 3],
+    stem: buildConceptStem(item.topic, item.concept, variant),
+    choices: all as [string, string, string, string],
+    correctIndex: idx,
+    explanation: `Correct because ${item.correct.toLowerCase()} This is consistent with CFA curriculum expectations for ${item.topic.toLowerCase()}.`,
+    tags: [level, item.topic, item.concept, 'conceptual'],
+  }
+}
+
+function buildCalcQuestion(template: CalcTemplate, seed: number): Question {
+  const q = template.build(seed)
+  return {
+    id: `calc-${template.level}-${template.key}-${seed}`,
+    level: template.level,
+    topic: template.topic,
+    difficulty: template.difficulty,
+    stem: q.stem,
+    choices: q.choices,
+    correctIndex: q.correctIndex,
+    explanation: q.explanation,
+    tags: [template.level, template.topic, ...q.tags],
+  }
 }
 
 export function generateQuestionBank(target = 1000): Question[] {
   const output: Question[] = []
-  const levels: CFALevel[] = ['L1', 'L2', 'L3']
-  let variant = 0
 
+  let calcSeed = 1
+  while (output.length < Math.floor(target * 0.62)) {
+    for (const template of CALC_TEMPLATES) {
+      output.push(buildCalcQuestion(template, calcSeed))
+      calcSeed += 1
+      if (output.length >= Math.floor(target * 0.62)) {
+        break
+      }
+    }
+  }
+
+  let conceptVariant = 0
+  const levels: CFALevel[] = ['L1', 'L2', 'L3']
   while (output.length < target) {
     for (const level of levels) {
       for (const item of LEVEL_TOPIC_CONCEPTS[level]) {
-        const qid = `${level}-${slugify(item.topic)}-${slugify(item.concept)}-${variant}`
-        const { choices, correctIndex } = buildChoices(
-          item.correct,
-          item.wrong,
-          `${qid}-${variant}`,
-        )
-
-        output.push({
-          id: qid,
-          level,
-          topic: item.topic,
-          difficulty: DIFFICULTIES[(variant + output.length) % DIFFICULTIES.length],
-          stem: buildStem(item.topic, item.concept, variant),
-          choices,
-          correctIndex,
-          explanation: `Correct because ${item.correct.toLowerCase()} This reflects a core ${item.topic.toLowerCase()} principle tested in CFA-style multiple-choice questions.`,
-          tags: [level, item.topic, item.concept, 'mcq'],
-        })
-
+        output.push(buildConceptQuestion(level, item, conceptVariant))
+        conceptVariant += 1
         if (output.length >= target) {
-          return output
+          break
         }
       }
+      if (output.length >= target) {
+        break
+      }
     }
-    variant += 1
   }
 
   return output

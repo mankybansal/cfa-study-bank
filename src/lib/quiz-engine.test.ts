@@ -12,10 +12,11 @@ describe('quiz-engine', () => {
   it('creates a filtered session with requested size', () => {
     const questions = generateQuestionBank(120)
     const session = createSession(questions, 20, { levels: ['L2'] })
+    const byId = Object.fromEntries(questions.map((q) => [q.id, q]))
 
     expect(session.questionIds).toHaveLength(20)
     expect(
-      session.questionIds.every((id) => id.startsWith('L2-')),
+      session.questionIds.every((id) => byId[id]?.level === 'L2'),
     ).toBeTruthy()
     expect(session.completed).toBeFalsy()
   })

@@ -97,57 +97,54 @@ function App() {
         </TabsList>
 
         <TabsContent value="practice" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <BookOpen className="h-5 w-5" /> Session Setup
-              </CardTitle>
-              <CardDescription>Choose level coverage and question count.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              <div className="grid gap-3 md:grid-cols-3">
-                {LEVELS.map((level) => (
-                  <Label
-                    key={level}
-                    className="flex cursor-pointer items-center gap-2 rounded-md border p-3"
-                  >
-                    <Checkbox
-                      checked={selectedLevels.includes(level)}
-                      onCheckedChange={() => toggleLevel(level)}
-                      aria-label={`Toggle ${level}`}
-                    />
-                    <span>{level}</span>
-                  </Label>
-                ))}
-              </div>
+          {!activeSession ? (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <BookOpen className="h-5 w-5" /> Session Setup
+                </CardTitle>
+                <CardDescription>Choose level coverage and question count.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-5">
+                <div className="grid gap-3 md:grid-cols-3">
+                  {LEVELS.map((level) => (
+                    <Label
+                      key={level}
+                      className="flex cursor-pointer items-center gap-2 rounded-md border p-3"
+                    >
+                      <Checkbox
+                        checked={selectedLevels.includes(level)}
+                        onCheckedChange={() => toggleLevel(level)}
+                        aria-label={`Toggle ${level}`}
+                      />
+                      <span>{level}</span>
+                    </Label>
+                  ))}
+                </div>
 
-              <div className="w-full max-w-xs space-y-2">
-                <Label htmlFor="question-count">Question count</Label>
-                <Input
-                  id="question-count"
-                  type="number"
-                  min={10}
-                  max={120}
-                  value={sessionSize}
-                  onChange={(event) => setSessionSize(Number(event.target.value) || 30)}
-                />
-              </div>
+                <div className="w-full max-w-xs space-y-2">
+                  <Label htmlFor="question-count">Question count</Label>
+                  <Input
+                    id="question-count"
+                    type="number"
+                    min={10}
+                    max={120}
+                    value={sessionSize}
+                    onChange={(event) => setSessionSize(Number(event.target.value) || 30)}
+                  />
+                </div>
 
-              <div className="flex flex-wrap gap-2">
-                <Button onClick={startSession} data-testid="start-session">
-                  Start New Session
-                </Button>
-                {activeSession ? (
-                  <Button variant="secondary" onClick={() => moveNext()}>
-                    Skip Current
+                <div className="flex flex-wrap gap-2">
+                  <Button onClick={startSession} data-testid="start-session">
+                    Start New Session
                   </Button>
-                ) : null}
-                <Button variant="outline" onClick={resetProgress}>
-                  <RefreshCcw className="mr-2 h-4 w-4" /> Reset Local Progress
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                  <Button variant="outline" onClick={resetProgress}>
+                    <RefreshCcw className="mr-2 h-4 w-4" /> Reset Local Progress
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
 
           {activeSession && currentQuestion ? (
             <Card data-testid="question-card">

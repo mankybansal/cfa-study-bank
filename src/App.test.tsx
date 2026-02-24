@@ -17,6 +17,7 @@ describe('App', () => {
     await user.click(screen.getByTestId('start-session'))
 
     expect(await screen.findByTestId('question-card')).toBeInTheDocument()
+    expect(screen.queryByText('Session Setup')).not.toBeInTheDocument()
 
     const options = screen.getAllByRole('button').filter((btn) =>
       /^[A-D]\.\s/.test(btn.textContent ?? ''),
