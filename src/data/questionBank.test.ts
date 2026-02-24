@@ -59,4 +59,19 @@ describe('question bank', () => {
       ).toBeTruthy()
     }
   })
+
+  it('personalizes sources across question types', () => {
+    const signatureSet = new Set(
+      QUESTION_BANK.map((q) =>
+        q.sources
+          .map((s) => s.url)
+          .sort()
+          .join('|'),
+      ),
+    )
+    expect(signatureSet.size).toBeGreaterThan(25)
+
+    const uniqueUrls = new Set(QUESTION_BANK.flatMap((q) => q.sources.map((s) => s.url)))
+    expect(uniqueUrls.size).toBeGreaterThan(20)
+  })
 })

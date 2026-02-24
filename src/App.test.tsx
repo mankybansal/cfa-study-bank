@@ -13,10 +13,14 @@ describe('App', () => {
     const user = userEvent.setup()
 
     render(<App />)
+    const countInput = screen.getByLabelText('Question count')
+    await user.clear(countInput)
+    await user.type(countInput, '5')
 
     await user.click(screen.getByTestId('start-session'))
 
     expect(await screen.findByTestId('question-card')).toBeInTheDocument()
+    expect(useStudyStore.getState().activeSession?.questionIds.length).toBe(5)
     expect(screen.queryByText('Session Setup')).not.toBeInTheDocument()
 
     const options = screen.getAllByRole('button').filter((btn) =>

@@ -396,8 +396,9 @@ function App() {
   }
 
   const startSession = (): void => {
+    const normalizedSize = Number.isFinite(sessionSize) ? Math.round(sessionSize) : 40
     createNewSession({
-      size: Math.max(10, Math.min(180, sessionSize)),
+      size: Math.max(1, Math.min(180, normalizedSize)),
       filters: {
         levels: selectedLevels.length > 0 ? selectedLevels : ['L1', 'L2', 'L3'],
       },
@@ -481,10 +482,17 @@ function App() {
                     <Input
                       id="question-count"
                       type="number"
-                      min={10}
+                      min={1}
                       max={180}
-                      value={sessionSize}
-                      onChange={(event) => setSessionSize(Number(event.target.value) || 40)}
+                      value={Number.isFinite(sessionSize) ? sessionSize : ''}
+                      onChange={(event) => {
+                        const raw = event.target.value
+                        if (raw === '') {
+                          setSessionSize(Number.NaN)
+                          return
+                        }
+                        setSessionSize(Number(raw))
+                      }}
                     />
                   </div>
 

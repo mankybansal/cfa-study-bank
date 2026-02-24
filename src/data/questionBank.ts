@@ -40,16 +40,23 @@ type CalcTemplate = {
   }
 }
 
+const CFA_PROGRAM_URL = 'https://www.cfainstitute.org/programs/cfa-program'
+const CFA_EXAM_URL = 'https://www.cfainstitute.org/programs/cfa-program/exam'
+const CFA_CANDIDATE_RESOURCES_URL =
+  'https://www.cfainstitute.org/programs/cfa-program/candidate-resources'
+const CFA_CBOK_URL =
+  'https://www.cfainstitute.org/programs/cfa-program/candidate-resources/cbok'
+
 const LEVEL_SOURCE_URLS: Record<CFALevel, string> = {
-  L1: 'https://www.cfainstitute.org/en/programs/cfa/candidate/level-i',
-  L2: 'https://www.cfainstitute.org/en/programs/cfa/candidate/level-ii',
-  L3: 'https://www.cfainstitute.org/en/programs/cfa/candidate/level-iii',
+  L1: CFA_EXAM_URL,
+  L2: `${CFA_CBOK_URL}#230548828-404463302-1`,
+  L3: `${CFA_CBOK_URL}#230548828-3858849485-1`,
 }
 
 const LEVEL_SOURCE_TITLES: Record<CFALevel, string> = {
-  L1: 'CFA Level I Candidate Page',
-  L2: 'CFA Level II Candidate Page',
-  L3: 'CFA Level III Candidate Page',
+  L1: 'CFA Program Exam Overview',
+  L2: 'CFA CBOK Topic Areas (Level I and II)',
+  L3: 'CFA CBOK Topic Areas (Level III)',
 }
 
 const TOPIC_ALIGNMENT_NOTES: Record<string, string> = {
@@ -71,6 +78,411 @@ const TOPIC_ALIGNMENT_NOTES: Record<string, string> = {
   'Derivatives and Currency Management': 'Hedging overlays and currency management are tested.',
   'Risk Management': 'Tail risk, stress testing, and integrated risk control are expected.',
   'Performance Measurement': 'Attribution and risk-adjusted performance interpretation are tested.',
+}
+
+const TOPIC_SOURCE_MAP: Record<string, SourceRef[]> = {
+  'Ethical and Professional Standards': [
+    {
+      title: 'CFA CBOK: Ethical and Professional Standards',
+      url: `${CFA_CBOK_URL}#230548828-404463302-1`,
+      note: 'Official topic area for CFA Level I/II ethical coverage.',
+    },
+    {
+      title: 'CFA Institute Ethics and Standards',
+      url: 'https://www.cfainstitute.org/en/ethics-standards',
+      note: 'Code and Standards framework tested throughout the CFA Program.',
+    },
+  ],
+  'Quantitative Methods': [
+    {
+      title: 'CFA CBOK: Quantitative Methods',
+      url: `${CFA_CBOK_URL}#230548828-404463302-2`,
+      note: 'Official quantitative methods scope for Levels I/II.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Simple Linear Regression',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/simple-linear-regression',
+      note: 'Regression model interpretation and calculation practice.',
+    },
+  ],
+  Economics: [
+    {
+      title: 'CFA CBOK: Economics',
+      url: `${CFA_CBOK_URL}#230548828-404463302-3`,
+      note: 'Official economics topic area coverage in the CFA curriculum.',
+    },
+  ],
+  'Financial Statement Analysis': [
+    {
+      title: 'CFA CBOK: Financial Statement Analysis',
+      url: `${CFA_CBOK_URL}#230548828-404463302-4`,
+      note: 'Official accounting and statement-analysis scope for Levels I/II.',
+    },
+  ],
+  'Corporate Issuers': [
+    {
+      title: 'CFA CBOK: Corporate Issuers',
+      url: `${CFA_CBOK_URL}#230548828-404463302-5`,
+      note: 'Capital structure and capital budgeting topic scope.',
+    },
+  ],
+  'Equity Investments': [
+    {
+      title: 'CFA CBOK: Equity Investments',
+      url: `${CFA_CBOK_URL}#230548828-404463302-6`,
+      note: 'Official equity analysis and valuation topic area.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Free Cash Flow Valuation',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/free-cash-flow-valuation',
+      note: 'Core equity valuation framework used in CFA-style calculations.',
+    },
+  ],
+  'Fixed Income': [
+    {
+      title: 'CFA CBOK: Fixed Income',
+      url: `${CFA_CBOK_URL}#230548828-404463302-7`,
+      note: 'Official fixed-income curriculum scope for Levels I/II.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Overview of Fixed-Income Portfolio Management',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/overview-fixed-income-portfolio-management',
+      note: 'Duration, risk, and fixed-income portfolio construction context.',
+    },
+  ],
+  Derivatives: [
+    {
+      title: 'CFA CBOK: Derivatives',
+      url: `${CFA_CBOK_URL}#230548828-404463302-8`,
+      note: 'Official derivatives topic coverage for Levels I/II.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Swaps, Forwards, and Futures Strategies',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/swaps-forwards-futures-strategies',
+      note: 'Applied derivative hedging and pricing strategy reference.',
+    },
+  ],
+  'Alternative Investments': [
+    {
+      title: 'CFA CBOK: Alternative Investments',
+      url: `${CFA_CBOK_URL}#230548828-404463302-9`,
+      note: 'Official alternative-investments topic area in Levels I/II.',
+    },
+  ],
+  'Portfolio Management': [
+    {
+      title: 'CFA CBOK: Portfolio Management and Wealth Planning',
+      url: `${CFA_CBOK_URL}#230548828-404463302-10`,
+      note: 'Official portfolio-management scope for Levels I/II.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Portfolio Risk and Return Part I',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/portfolio-risk-return-part-1',
+      note: 'Portfolio return aggregation and risk measurement foundation.',
+    },
+  ],
+  'Behavioral Finance': [
+    {
+      title: 'CFA CBOK: Level III Portfolio Construction',
+      url: `${CFA_CBOK_URL}#230548828-3858849485-3`,
+      note: 'Level III topic area where behavioral concepts are applied.',
+    },
+    {
+      title: 'CFA Refresher Reading 2025: Asset Allocation with Real-World Constraints',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2025/asset-allocation-with-real-world-constraints',
+      note: 'Behavior-aware portfolio construction under practical constraints.',
+    },
+  ],
+  'Capital Market Expectations': [
+    {
+      title: 'CFA CBOK: Level III Portfolio Construction',
+      url: `${CFA_CBOK_URL}#230548828-3858849485-3`,
+      note: 'Capital market expectation setting is applied within portfolio construction.',
+    },
+    {
+      title: 'Investopedia: Scenario Analysis',
+      url: 'https://www.investopedia.com/terms/s/scenario_analysis.asp',
+      note: 'Scenario-based forecast method used in expectation setting.',
+    },
+  ],
+  'Asset Allocation': [
+    {
+      title: 'CFA CBOK: Level III Asset Allocation',
+      url: `${CFA_CBOK_URL}#230548828-3858849485-4`,
+      note: 'Official Level III asset-allocation topic area.',
+    },
+    {
+      title: 'CFA Refresher Reading 2025: Asset Allocation with Real-World Constraints',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2025/asset-allocation-with-real-world-constraints',
+      note: 'Strategic and tactical allocation decisions with constraints.',
+    },
+  ],
+  'Fixed Income Portfolio Management': [
+    {
+      title: 'CFA Refresher Reading 2026: Overview of Fixed-Income Portfolio Management',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/overview-fixed-income-portfolio-management',
+      note: 'Liability-aware fixed-income mandate design and risk control.',
+    },
+  ],
+  'Equity Portfolio Management': [
+    {
+      title: 'CFA Refresher Reading 2026: Portfolio Risk and Return Part II',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/portfolio-risk-return-part-2',
+      note: 'Active risk, alpha, and diversified portfolio management concepts.',
+    },
+  ],
+  'Derivatives and Currency Management': [
+    {
+      title: 'CFA CBOK: Level III Derivatives and Risk Management',
+      url: `${CFA_CBOK_URL}#230548828-3858849485-2`,
+      note: 'Official Level III derivatives and risk-management scope.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Swaps, Forwards, and Futures Strategies',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/swaps-forwards-futures-strategies',
+      note: 'Derivative overlays used for currency and market risk control.',
+    },
+  ],
+  'Risk Management': [
+    {
+      title: 'CFA Refresher Reading 2025: Introduction to Risk Management',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2025/introduction-risk-management',
+      note: 'Integrated risk governance, measurement, and stress testing context.',
+    },
+  ],
+  'Performance Measurement': [
+    {
+      title: 'CFA CBOK: Level III Performance Measurement',
+      url: `${CFA_CBOK_URL}#230548828-3858849485-5`,
+      note: 'Official Level III performance-measurement topic area.',
+    },
+    {
+      title: 'CFA Refresher Reading 2025: Portfolio Performance Evaluation',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2025/portfolio-performance-evaluation',
+      note: 'Risk-adjusted performance and attribution framework.',
+    },
+  ],
+}
+
+const TAG_SOURCE_MAP: Record<string, SourceRef[]> = {
+  returns: [
+    {
+      title: 'Investopedia: Holding Period Return (HPR)',
+      url: 'https://www.investopedia.com/terms/h/holdingperiodreturn-yield.asp',
+      note: 'Return measurement convention used in one-period equity items.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Portfolio Risk and Return Part I',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/portfolio-risk-return-part-1',
+      note: 'Computation and interpretation of return metrics.',
+    },
+  ],
+  tvm: [
+    {
+      title: 'Investopedia: Present Value',
+      url: 'https://www.investopedia.com/terms/p/presentvalue.asp',
+      note: 'Discounting framework for time value of money calculations.',
+    },
+  ],
+  statistics: [
+    {
+      title: 'Investopedia: Correlation',
+      url: 'https://www.investopedia.com/terms/c/correlation.asp',
+      note: 'Statistical relationship interpretation for paired variables.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Portfolio Risk and Return Part I',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/portfolio-risk-return-part-1',
+      note: 'Variance-covariance and correlation usage in risk quantification.',
+    },
+  ],
+  bayes: [
+    {
+      title: 'Investopedia: Bayes Theorem',
+      url: 'https://www.investopedia.com/terms/b/bayes-theorem.asp',
+      note: 'Conditional probability framework for posterior inference.',
+    },
+  ],
+  regression: [
+    {
+      title: 'CFA Refresher Reading 2026: Simple Linear Regression',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/simple-linear-regression',
+      note: 'Regression estimation and coefficient interpretation.',
+    },
+    {
+      title: 'Investopedia: Regression',
+      url: 'https://www.investopedia.com/terms/r/regression.asp',
+      note: 'Regression intuition and interpretation terminology.',
+    },
+  ],
+  capm: [
+    {
+      title: 'Investopedia: Capital Asset Pricing Model (CAPM)',
+      url: 'https://www.investopedia.com/terms/c/capm.asp',
+      note: 'Required-return model based on systematic risk exposure.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Portfolio Risk and Return Part II',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/portfolio-risk-return-part-2',
+      note: 'Systematic risk and expected-return linkage in portfolio context.',
+    },
+  ],
+  duration: [
+    {
+      title: 'Investopedia: Duration',
+      url: 'https://www.investopedia.com/terms/d/duration.asp',
+      note: 'Bond price sensitivity to parallel yield shifts.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Overview of Fixed-Income Portfolio Management',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/overview-fixed-income-portfolio-management',
+      note: 'Duration and key-rate risk in fixed-income mandates.',
+    },
+  ],
+  convexity: [
+    {
+      title: 'Investopedia: Convexity',
+      url: 'https://www.investopedia.com/terms/c/convexity.asp',
+      note: 'Second-order adjustment for bond price-yield curvature.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Arbitrage-Free Valuation Framework',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/arbitrage-free-valuation-framework',
+      note: 'Convexity-aware valuation and fixed-income pricing consistency.',
+    },
+  ],
+  forwards: [
+    {
+      title: 'Investopedia: Cost of Carry',
+      url: 'https://www.investopedia.com/terms/c/costofcarry.asp',
+      note: 'Forward/futures pricing intuition with carry adjustments.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Swaps, Forwards, and Futures Strategies',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/swaps-forwards-futures-strategies',
+      note: 'No-arbitrage forward and futures implementation in practice.',
+    },
+  ],
+  options: [
+    {
+      title: 'Investopedia: Option Pricing Theory',
+      url: 'https://www.investopedia.com/terms/o/optionpricingtheory.asp',
+      note: 'Option value and payoff structure fundamentals.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Options Strategies',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/options-strategies',
+      note: 'Exam-style payoff logic and option combinations.',
+    },
+  ],
+  'put-call-parity': [
+    {
+      title: 'CFA Refresher Reading 2026: Option Replication Using Put-Call Parity',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/option-replication-using-put-call-parity',
+      note: 'Arbitrage relation used directly in derivative pricing items.',
+    },
+    {
+      title: 'Investopedia: Put-Call Parity',
+      url: 'https://www.investopedia.com/terms/p/putcallparity.asp',
+      note: 'Arbitrage relation connecting calls, puts, spot, and strike PV.',
+    },
+  ],
+  hedging: [
+    {
+      title: 'Investopedia: Hedge Ratio',
+      url: 'https://www.investopedia.com/terms/h/hedgeratio.asp',
+      note: 'Contract sizing framework for risk-offset overlays.',
+    },
+    {
+      title: 'Investopedia: Foreign Exchange Risk',
+      url: 'https://www.investopedia.com/terms/f/foreignexchangerisk.asp',
+      note: 'Currency exposure and hedge design context.',
+    },
+  ],
+  'bond-yield': [
+    {
+      title: 'Investopedia: Current Yield',
+      url: 'https://www.investopedia.com/terms/c/currentyield.asp',
+      note: 'Coupon-to-price yield metric used in bond analysis questions.',
+    },
+    {
+      title: 'CFA Refresher Reading 2026: Arbitrage-Free Valuation Framework',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/arbitrage-free-valuation-framework',
+      note: 'Yield-curve consistent valuation for fixed-income cash flows.',
+    },
+  ],
+  'sharpe-ratio': [
+    {
+      title: 'Investopedia: Sharpe Ratio',
+      url: 'https://www.investopedia.com/terms/s/sharperatio.asp',
+      note: 'Risk-adjusted return quality metric.',
+    },
+    {
+      title: 'CFA Refresher Reading 2025: Portfolio Performance Evaluation',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2025/portfolio-performance-evaluation',
+      note: 'Risk-adjusted performance measurement and interpretation.',
+    },
+  ],
+  'information-ratio': [
+    {
+      title: 'Investopedia: Information Ratio',
+      url: 'https://www.investopedia.com/terms/i/informationratio.asp',
+      note: 'Active return per unit of active risk.',
+    },
+    {
+      title: 'CFA Refresher Reading 2025: Portfolio Performance Evaluation',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2025/portfolio-performance-evaluation',
+      note: 'Benchmark-relative active-risk performance assessment.',
+    },
+  ],
+  treynor: [
+    {
+      title: 'Investopedia: Treynor Ratio',
+      url: 'https://www.investopedia.com/terms/t/treynorratio.asp',
+      note: 'Return per unit of systematic risk.',
+    },
+    {
+      title: 'CFA Refresher Reading 2025: Portfolio Performance Evaluation',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2025/portfolio-performance-evaluation',
+      note: 'Systematic-risk-adjusted portfolio performance evaluation.',
+    },
+  ],
+  'financial-statements': [
+    {
+      title: 'Investopedia: Ratio Analysis',
+      url: 'https://www.investopedia.com/terms/r/ratioanalysis.asp',
+      note: 'Financial statement ratio interpretation context.',
+    },
+    {
+      title: 'CFA CBOK: Financial Statement Analysis',
+      url: `${CFA_CBOK_URL}#230548828-404463302-4`,
+      note: 'Official financial-statement analysis topic coverage.',
+    },
+  ],
+  'equity-valuation': [
+    {
+      title: 'CFA Refresher Reading 2026: Free Cash Flow Valuation',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/free-cash-flow-valuation',
+      note: 'Core intrinsic valuation model used in CFA equity analysis.',
+    },
+    {
+      title: 'Investopedia: Valuation',
+      url: 'https://www.investopedia.com/terms/v/valuation.asp',
+      note: 'General valuation terminology and framework.',
+    },
+  ],
+  'currency-management': [
+    {
+      title: 'CFA Refresher Reading 2026: Swaps, Forwards, and Futures Strategies',
+      url: 'https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/swaps-forwards-futures-strategies',
+      note: 'Derivative overlays for managing currency and market exposures.',
+    },
+    {
+      title: 'Investopedia: Foreign Exchange Risk',
+      url: 'https://www.investopedia.com/terms/f/foreignexchangerisk.asp',
+      note: 'Currency risk source and hedge rationale.',
+    },
+  ],
 }
 
 const LEVEL_TOPIC_CONCEPTS: Record<CFALevel, TopicConcept[]> = {
@@ -1155,35 +1567,37 @@ function buildConceptStem(topic: string, concept: string, variant: number): stri
 }
 
 function buildSources(level: CFALevel, topic: string, tags: string[]): SourceRef[] {
-  const quantOrCalc = tags.includes('calculation') || tags.includes('statistics')
+  const topicSources = TOPIC_SOURCE_MAP[topic] ?? []
+  const tagSources = tags.flatMap((tag) => TAG_SOURCE_MAP[tag] ?? [])
 
-  const refs: SourceRef[] = [
+  const references: SourceRef[] = [
     {
       title: LEVEL_SOURCE_TITLES[level],
       url: LEVEL_SOURCE_URLS[level],
-      note: 'Official CFA Institute level page with current exam format and topic-weight guidance.',
+      note: `Official ${LEVEL_SOURCE_TITLES[level]} scope and exam format context.`,
+    },
+    ...topicSources,
+    ...tagSources,
+    {
+      title: 'CFA Candidate Resources',
+      url: CFA_CANDIDATE_RESOURCES_URL,
+      note: TOPIC_ALIGNMENT_NOTES[topic] ?? `Curriculum-aligned topic coverage reference for ${topic}.`,
     },
     {
       title: 'CFA Program Overview',
-      url: 'https://www.cfainstitute.org/en/programs/cfa',
-      note: 'Official scope for candidate pathway, curriculum, and assessment expectations.',
-    },
-    {
-      title: 'CFA Candidate Resources',
-      url: 'https://www.cfainstitute.org/programs/cfa-program/candidate-resources',
-      note: TOPIC_ALIGNMENT_NOTES[topic] ?? `Curriculum-aligned topic coverage reference for ${topic}.`,
+      url: CFA_PROGRAM_URL,
+      note: 'Official CFA program-level curriculum and progression reference.',
     },
   ]
 
-  if (quantOrCalc) {
-    refs.push({
-      title: 'CFA Practical Skills Modules',
-      url: 'https://www.cfainstitute.org/programs/cfa/candidate/resources',
-      note: 'Quantitative and applied analysis expectations that support formula-based practice.',
-    })
+  const unique = new Map<string, SourceRef>()
+  for (const ref of references) {
+    if (!unique.has(ref.url)) {
+      unique.set(ref.url, ref)
+    }
   }
 
-  return refs
+  return [...unique.values()].slice(0, 6)
 }
 
 function buildConceptQuestion(level: CFALevel, item: TopicConcept, variant: number): Question {
