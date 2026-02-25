@@ -353,7 +353,11 @@ function App() {
   } = useStudyStore()
 
   const [selectedLevels, setSelectedLevels] = useState<CFALevel[]>(['L1', 'L2', 'L3'])
+  const [selectedTopics, setSelectedTopics] = useState<string[]>(
+    () => [...new Set(questions.map((question) => question.topic))].sort((a, b) => a.localeCompare(b)),
+  )
   const [sessionSize, setSessionSize] = useState(40)
+  const [setupError, setSetupError] = useState<string | null>(null)
   const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('all')
   const [selectedReviewKey, setSelectedReviewKey] = useState<string | null>(null)
 
@@ -376,6 +380,18 @@ function App() {
     [answeredDifficulties],
   )
 
+  const availableTopics = useMemo(() => {
+    const activeLevels = selectedLevels.length > 0 ? selectedLevels : LEVELS
+    return [...new Set(questions.filter((question) => activeLevels.includes(question.level)).map((question) => question.topic))].sort(
+      (a, b) => a.localeCompare(b),
+    )
+  }, [questions, selectedLevels])
+
+  const selectedVisibleTopics = useMemo(
+    () => selectedTopics.filter((topic) => availableTopics.includes(topic)),
+    [selectedTopics, availableTopics],
+  )
+
   const reviewRows = useMemo(() => {
     return answeredHistory.filter((row) => {
       if (reviewFilter === 'all') return true
@@ -395,12 +411,28 @@ function App() {
     })
   }
 
+  const toggleTopic = (topic: string): void => {
+    setSelectedTopics((current) => {
+      if (current.includes(topic)) {
+        return current.filter((item) => item !== topic)
+      }
+      return [...current, topic]
+    })
+  }
+
   const startSession = (): void => {
     const normalizedSize = Number.isFinite(sessionSize) ? Math.round(sessionSize) : 40
+    const topicsForSession = selectedVisibleTopics
+    if (topicsForSession.length === 0) {
+      setSetupError('Select at least one topic to start a session.')
+      return
+    }
+    setSetupError(null)
     createNewSession({
       size: Math.max(1, Math.min(180, normalizedSize)),
       filters: {
         levels: selectedLevels.length > 0 ? selectedLevels : ['L1', 'L2', 'L3'],
+        topics: topicsForSession,
       },
     })
   }
@@ -477,6 +509,43 @@ function App() {
                     ))}
                   </div>
 
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <Label>Topics ({selectedVisibleTopics.length}/{availableTopics.length} selected)</Label>
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant="outline"
+                          type="button"
+                          onClick={() => setSelectedTopics(availableTopics)}
+                        >
+                          Select all topics
+                        </Button>
+                        <Button
+                          variant="outline"
+                          type="button"
+                          onClick={() => setSelectedTopics([])}
+                        >
+                          Clear topics
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="grid max-h-64 gap-2 overflow-auto rounded-md border p-3 md:grid-cols-2">
+                      {availableTopics.map((topic) => (
+                        <Label
+                          key={topic}
+                          className="flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm"
+                        >
+                          <Checkbox
+                            checked={selectedVisibleTopics.includes(topic)}
+                            onCheckedChange={() => toggleTopic(topic)}
+                            aria-label={`Toggle topic ${topic}`}
+                          />
+                          <span>{topic}</span>
+                        </Label>
+                      ))}
+                    </div>
+                  </div>
+
                   <div className="w-full max-w-xs space-y-2">
                     <Label htmlFor="question-count">Question count</Label>
                     <Input
@@ -495,6 +564,11 @@ function App() {
                       }}
                     />
                   </div>
+                  {setupError ? (
+                    <p className="text-sm text-destructive" data-testid="setup-error">
+                      {setupError}
+                    </p>
+                  ) : null}
 
                   <div className="flex flex-wrap gap-2">
                     <Button onClick={startSession} data-testid="start-session">
