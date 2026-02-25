@@ -356,6 +356,7 @@ function App() {
   const [selectedTopics, setSelectedTopics] = useState<string[]>(
     () => [...new Set(questions.map((question) => question.topic))].sort((a, b) => a.localeCompare(b)),
   )
+  const [activeTab, setActiveTab] = useState<'practice' | 'review' | 'analytics'>('practice')
   const [sessionSize, setSessionSize] = useState(40)
   const [setupError, setSetupError] = useState<string | null>(null)
   const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('all')
@@ -403,6 +404,7 @@ function App() {
   const selectedReview = reviewRows.find(
     (row) => `${row.questionId}-${row.answeredAt}` === selectedReviewKey,
   )
+  const showNextDock = activeTab === 'practice' && Boolean(activeSession && currentQuestion && currentAnswer)
 
   const toggleLevel = (level: CFALevel): void => {
     setSelectedLevels((current) => {
@@ -444,7 +446,7 @@ function App() {
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 md:px-8">
+    <main className={`mx-auto max-w-6xl px-4 pt-8 md:px-8 ${showNextDock ? 'pb-28' : 'pb-8'}`}>
       <header className="mb-8">
         <div className="mb-3 flex items-center gap-2">
           <Badge variant="secondary" className="rounded-full px-3 py-1">
@@ -459,7 +461,11 @@ function App() {
         </p>
       </header>
 
-      <Tabs defaultValue="practice" className="space-y-4">
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as 'practice' | 'review' | 'analytics')}
+        className="space-y-4"
+      >
         <TabsList className="grid w-full grid-cols-3 md:w-[560px]">
           <TabsTrigger value="practice">Practice</TabsTrigger>
           <TabsTrigger value="review">Review</TabsTrigger>
@@ -693,9 +699,6 @@ function App() {
                       {currentAnswer.isCorrect ? 'Correct' : 'Incorrect'} answer
                     </p>
                     <MathText className="text-muted-foreground" text={currentQuestion.explanation} />
-                    <Button className="mt-3" onClick={() => moveNext()} data-testid="next-question">
-                      Next Question
-                    </Button>
                   </div>
                 ) : null}
               </CardContent>
@@ -888,6 +891,25 @@ function App() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {showNextDock ? (
+        <div
+          className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85"
+          data-testid="next-question-dock"
+        >
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 md:px-8">
+            <p className="text-sm">
+              <span className={currentAnswer?.isCorrect ? 'text-emerald-600' : 'text-rose-600'}>
+                {currentAnswer?.isCorrect ? 'Correct.' : 'Incorrect.'}
+              </span>{' '}
+              Continue when ready.
+            </p>
+            <Button onClick={() => moveNext()} data-testid="next-question">
+              Next Question
+            </Button>
+          </div>
+        </div>
+      ) : null}
     </main>
   )
 }

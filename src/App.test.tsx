@@ -30,6 +30,7 @@ describe('App', () => {
 
     await user.click(options[0])
     expect(await screen.findByTestId('answer-feedback')).toBeInTheDocument()
+    expect(screen.getByTestId('next-question-dock')).toBeInTheDocument()
     expect(screen.getByTestId('question-sources')).toBeInTheDocument()
 
     await user.click(screen.getByTestId('back-main'))
