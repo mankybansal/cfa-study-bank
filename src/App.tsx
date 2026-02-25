@@ -381,17 +381,51 @@ function App() {
     [answeredDifficulties],
   )
 
-  const availableTopics = useMemo(() => {
-    const activeLevels = selectedLevels.length > 0 ? selectedLevels : LEVELS
-    return [...new Set(questions.filter((question) => activeLevels.includes(question.level)).map((question) => question.topic))].sort(
-      (a, b) => a.localeCompare(b),
-    )
-  }, [questions, selectedLevels])
+  const selectedLevelSet = useMemo(
+    () => new Set(selectedLevels.length > 0 ? selectedLevels : LEVELS),
+    [selectedLevels],
+  )
+
+  const topicCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const question of questions) {
+      if (!selectedLevelSet.has(question.level)) {
+        continue
+      }
+      counts.set(question.topic, (counts.get(question.topic) ?? 0) + 1)
+    }
+    return counts
+  }, [questions, selectedLevelSet])
+
+  const availableTopics = useMemo(
+    () => [...topicCounts.keys()].sort((a, b) => a.localeCompare(b)),
+    [topicCounts],
+  )
 
   const selectedVisibleTopics = useMemo(
     () => selectedTopics.filter((topic) => availableTopics.includes(topic)),
     [selectedTopics, availableTopics],
   )
+
+  const selectedQuestionPoolSize = useMemo(() => {
+    if (selectedVisibleTopics.length === 0) {
+      return 0
+    }
+
+    const topicSet = new Set(selectedVisibleTopics)
+    let count = 0
+    for (const question of questions) {
+      if (selectedLevelSet.has(question.level) && topicSet.has(question.topic)) {
+        count += 1
+      }
+    }
+    return count
+  }, [questions, selectedLevelSet, selectedVisibleTopics])
+
+  const maxSelectableQuestionCount = Math.max(1, selectedQuestionPoolSize)
+  const clampedSessionSize = Number.isFinite(sessionSize)
+    ? Math.max(1, Math.min(maxSelectableQuestionCount, Math.round(sessionSize)))
+    : Number.NaN
 
   const reviewRows = useMemo(() => {
     return answeredHistory.filter((row) => {
@@ -423,15 +457,23 @@ function App() {
   }
 
   const startSession = (): void => {
-    const normalizedSize = Number.isFinite(sessionSize) ? Math.round(sessionSize) : 40
     const topicsForSession = selectedVisibleTopics
     if (topicsForSession.length === 0) {
       setSetupError('Select at least one topic to start a session.')
       return
     }
+
+    if (selectedQuestionPoolSize === 0) {
+      setSetupError('No questions match your current level/topic selection.')
+      return
+    }
+
+    const normalizedSize = Number.isFinite(sessionSize)
+      ? Math.round(sessionSize)
+      : Math.min(40, maxSelectableQuestionCount)
     setSetupError(null)
     createNewSession({
-      size: Math.max(1, Math.min(180, normalizedSize)),
+      size: Math.max(1, Math.min(maxSelectableQuestionCount, normalizedSize)),
       filters: {
         levels: selectedLevels.length > 0 ? selectedLevels : ['L1', 'L2', 'L3'],
         topics: topicsForSession,
@@ -546,7 +588,8 @@ function App() {
                             onCheckedChange={() => toggleTopic(topic)}
                             aria-label={`Toggle topic ${topic}`}
                           />
-                          <span>{topic}</span>
+                          <span className="flex-1">{topic}</span>
+                          <span className="text-xs text-muted-foreground">{topicCounts.get(topic) ?? 0}</span>
                         </Label>
                       ))}
                     </div>
@@ -558,8 +601,8 @@ function App() {
                       id="question-count"
                       type="number"
                       min={1}
-                      max={180}
-                      value={Number.isFinite(sessionSize) ? sessionSize : ''}
+                      max={maxSelectableQuestionCount}
+                      value={Number.isFinite(clampedSessionSize) ? clampedSessionSize : ''}
                       onChange={(event) => {
                         const raw = event.target.value
                         if (raw === '') {
@@ -569,6 +612,10 @@ function App() {
                         setSessionSize(Number(raw))
                       }}
                     />
+                    <p className="text-xs text-muted-foreground" data-testid="selected-pool-count">
+                      Selected pool: {selectedQuestionPoolSize} questions. Max session size:{' '}
+                      {maxSelectableQuestionCount}.
+                    </p>
                   </div>
                   {setupError ? (
                     <p className="text-sm text-destructive" data-testid="setup-error">

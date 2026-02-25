@@ -60,6 +60,15 @@ describe('App', () => {
     await user.click(screen.getByLabelText('Toggle topic Economics'))
 
     const countInput = screen.getByLabelText('Question count')
+    const stateBeforeStart = useStudyStore.getState()
+    const expectedPool = stateBeforeStart.questions.filter((q) =>
+      ['Quantitative Methods', 'Economics'].includes(q.topic),
+    ).length
+    expect(countInput).toHaveAttribute('max', String(expectedPool))
+    expect(screen.getByTestId('selected-pool-count')).toHaveTextContent(
+      `Selected pool: ${expectedPool} questions.`,
+    )
+
     await user.clear(countInput)
     await user.type(countInput, '8')
 
